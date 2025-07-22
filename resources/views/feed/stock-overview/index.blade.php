@@ -11,6 +11,11 @@
         <p class="text-muted mb-0">Monitor feed inventory levels and usage</p>
     </div>
     <div class="col-md-4 text-md-end">
+        @if(Auth::user()->role === 'admin')
+        <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#addFeedTypeModal">
+            <i class="fas fa-plus me-2"></i>Add Feed Type
+        </button>
+        @endif
         <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#filterModal">
             <i class="fas fa-filter me-2"></i>Filter Data
         </button>
@@ -180,10 +185,120 @@
             <i class="fas fa-chart-bar fa-3x text-muted mb-3"></i>
             <h5 class="text-muted">No stock data available</h5>
             <p class="text-muted">Start by adding feed types and recording stock entries.</p>
+            
+            @if(Auth::user()->role === 'admin')
+            <div class="mt-4">
+                <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#addFeedTypeModal">
+                    <i class="fas fa-plus me-2"></i>Add Your First Feed Type
+                </button>
+            </div>
+            @endif
+            
+            <!-- Show available feed types -->
+            @if($allFeedTypes->count() > 0)
+            <div class="mt-4">
+                <h6 class="text-muted mb-3">Available Feed Types:</h6>
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    @foreach($allFeedTypes as $feedType)
+                    <span class="badge bg-secondary p-2">
+                        {{ $feedType->name }} ({{ $feedType->unit }})
+                    </span>
+                    @endforeach
+                </div>
+                <small class="text-muted mt-2 d-block">
+                    Go to <a href="{{ route('feed.in.index') }}">Feed In</a> to start recording stock entries.
+                </small>
+            </div>
+            @endif
         </div>
         @endif
     </div>
 </div>
+
+<!-- Add Feed Type Modal (Admin Only) -->
+@if(Auth::user()->role === 'admin')
+<div class="modal fade" id="addFeedTypeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="{{ route('feed.types.store') }}">
+                @csrf
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-plus-circle me-2"></i>Add New Feed Type
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">
+                            <i class="fas fa-tag me-1"></i>Feed Type Name <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" 
+                               class="form-control @error('name') is-invalid @enderror" 
+                               id="name" 
+                               name="name" 
+                               value="{{ old('name') }}" 
+                               placeholder="e.g., Premium Starter Feed"
+                               required>
+                        @error('name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="unit" class="form-label">
+                            <i class="fas fa-ruler me-1"></i>Unit of Measurement <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select @error('unit') is-invalid @enderror" 
+                                id="unit" 
+                                name="unit" 
+                                required>
+                            <option value="">Select Unit</option>
+                            <option value="kg" {{ old('unit') === 'kg' ? 'selected' : '' }}>Kilograms (kg)</option>
+                            <option value="lbs" {{ old('unit') === 'lbs' ? 'selected' : '' }}>Pounds (lbs)</option>
+                            <option value="tons" {{ old('unit') === 'tons' ? 'selected' : '' }}>Tons</option>
+                            <option value="bags" {{ old('unit') === 'bags' ? 'selected' : '' }}>Bags</option>
+                            <option value="bales" {{ old('unit') === 'bales' ? 'selected' : '' }}>Bales</option>
+                            <option value="litres" {{ old('unit') === 'litres' ? 'selected' : '' }}>Litres</option>
+                            <option value="gallons" {{ old('unit') === 'gallons' ? 'selected' : '' }}>Gallons</option>
+                        </select>
+                        @error('unit')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">
+                            <i class="fas fa-info-circle me-1"></i>Description <span class="text-muted">(optional)</span>
+                        </label>
+                        <textarea class="form-control @error('description') is-invalid @enderror" 
+                                  id="description" 
+                                  name="description" 
+                                  rows="3" 
+                                  placeholder="Brief description of this feed type...">{{ old('description') }}</textarea>
+                        @error('description')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Note:</strong> Once created, you can immediately start recording stock entries for this feed type.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>Create Feed Type
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
 
 <!-- Filter Modal -->
 <div class="modal fade" id="filterModal" tabindex="-1">
@@ -247,4 +362,24 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    // Show Add Feed Type modal if there are validation errors for feed type creation
+    @if($errors->any() && (old('name') || old('unit') || old('description')))
+        @if(Auth::user()->role === 'admin')
+            var addFeedTypeModal = new bootstrap.Modal(document.getElementById('addFeedTypeModal'));
+            addFeedTypeModal.show();
+        @endif
+    @endif
+
+    // Auto-refresh page after successful feed type creation
+    @if(session('success') && str_contains(session('success'), 'Feed type'))
+        // Show success message and refresh the page to show new feed type
+        setTimeout(function() {
+            location.reload();
+        }, 2000);
+    @endif
+</script>
 @endsection

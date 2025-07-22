@@ -190,12 +190,25 @@ class FeedManagementController extends Controller
         ]);
 
         if ($validator->fails()) {
+            // Check if request came from stock overview page
+            if ($request->header('referer') && str_contains($request->header('referer'), 'stock-overview')) {
+                return redirect()->route('feed.stock.overview')
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+            
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
         }
 
         FeedType::create($request->only(['name', 'description', 'unit']));
+
+        // Check if request came from stock overview page
+        if ($request->header('referer') && str_contains($request->header('referer'), 'stock-overview')) {
+            return redirect()->route('feed.stock.overview')
+                ->with('success', 'Feed type "' . $request->name . '" created successfully!');
+        }
 
         return redirect()->route('feed.types.index')
             ->with('success', 'Feed type created successfully!');
