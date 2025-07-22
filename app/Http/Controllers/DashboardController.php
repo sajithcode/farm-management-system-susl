@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Batch;
 
 class DashboardController extends Controller
 {
@@ -16,24 +17,81 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         
-        // Dummy data for now - will be replaced with actual data later
+        // Get recent batches with current count > 0 for quick access (with error handling)
+        try {
+            $recentBatches = Batch::where('current_count', '>', 0)
+                                 ->orderBy('created_at', 'desc')
+                                 ->take(10)
+                                 ->get();
+        } catch (\Exception $e) {
+            $recentBatches = collect([]); // Empty collection if table doesn't exist
+        }
+        
+        // Calculate actual stats from database with error handling
+        try {
+            $totalBatches = Batch::count();
+            $totalAnimals = Batch::sum('current_count');
+        } catch (\Exception $e) {
+            $totalBatches = 0;
+            $totalAnimals = 0;
+        }
+        
+        // Calculate feed stock with error handling
+        try {
+            $feedIn = \DB::table('feed_ins')->sum('quantity');
+            $feedOut = \DB::table('feed_outs')->sum('quantity');
+            $totalFeedStock = $feedIn - $feedOut;
+        } catch (\Exception $e) {
+            $totalFeedStock = 0;
+        }
+        
+        // Get today's activity with error handling
+        try {
+            $deathsToday = \DB::table('batch_deaths')
+                             ->whereDate('death_date', today())
+                             ->sum('count');
+        } catch (\Exception $e) {
+            $deathsToday = 0;
+        }
+        
+        try {
+            $slaughtersToday = \DB::table('batch_slaughters')
+                                 ->whereDate('slaughter_date', today())
+                                 ->sum('count');
+        } catch (\Exception $e) {
+            $slaughtersToday = 0;
+        }
+        
+        // Calculate total production (total weight from slaughters) with error handling
+        try {
+            $totalProduction = \DB::table('batch_slaughters')->sum('total_weight');
+        } catch (\Exception $e) {
+            $totalProduction = 0;
+        }
+        
+        // Calculate total sales (revenue from slaughters) with error handling
+        try {
+            $totalSales = \DB::table('batch_slaughters')
+                            ->whereNotNull('total_weight')
+                            ->whereNotNull('price_per_kg')
+                            ->get()
+                            ->sum(function ($slaughter) {
+                                return $slaughter->total_weight * $slaughter->price_per_kg;
+                            });
+        } catch (\Exception $e) {
+            $totalSales = 0;
+        }
+        
         $stats = [
-            'total_batches' => 45,
-            'total_animals' => 1250,
-            'total_feed_stock' => 2500, // kg
-            'deaths_today' => 2,
-            'slaughters_today' => 8,
-            'total_production' => 15000, // kg
-            'total_sales' => 850000, // currency
+            'total_batches' => $totalBatches,
+            'total_animals' => $totalAnimals,
+            'total_feed_stock' => max(0, $totalFeedStock), // Ensure non-negative
+            'deaths_today' => $deathsToday,
+            'slaughters_today' => $slaughtersToday,
+            'total_production' => $totalProduction,
+            'total_sales' => $totalSales,
         ];
 
-        $quickLinks = [
-            'Add Batch' => route('dashboard'), // placeholder
-            'Add Animal' => route('dashboard'), // placeholder
-            'Add Feed' => route('dashboard'), // placeholder
-            'View Reports' => route('dashboard'), // placeholder
-        ];
-
-        return view('dashboard.index', compact('user', 'stats', 'quickLinks'));
+        return view('dashboard.index', compact('user', 'stats', 'recentBatches'));
     }
 }
