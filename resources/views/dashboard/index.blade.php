@@ -127,7 +127,7 @@
     </div>
 </div>
 
-<!-- Quick Links -->
+<!-- Quick Links & Recent Batches -->
 <div class="row">
     <div class="col-lg-8 mb-4">
         <div class="card">
@@ -138,41 +138,141 @@
             </div>
             <div class="card-body">
                 <div class="row">
+                    <!-- Animal Management Quick Actions -->
                     <div class="col-md-6 mb-3">
-                        <button class="btn btn-outline-primary quick-link-btn w-100 text-start" onclick="alert('Add Batch functionality coming soon!')">
-                            <i class="fas fa-users me-3"></i>
+                        <a href="{{ route('batches.create') }}" class="btn btn-outline-primary quick-link-btn w-100 text-start text-decoration-none">
+                            <i class="fas fa-plus-circle me-3 text-success"></i>
                             <div>
                                 <strong>Add New Batch</strong>
                                 <br><small class="text-muted">Register a new batch of animals</small>
                             </div>
-                        </button>
+                        </a>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <button class="btn btn-outline-success quick-link-btn w-100 text-start" onclick="alert('Add Animal functionality coming soon!')">
-                            <i class="fas fa-paw me-3"></i>
+                        <a href="{{ route('batches.index') }}" class="btn btn-outline-secondary quick-link-btn w-100 text-start text-decoration-none">
+                            <i class="fas fa-users me-3 text-primary"></i>
                             <div>
-                                <strong>Add Individual Animal</strong>
-                                <br><small class="text-muted">Register individual animal</small>
+                                <strong>View All Batches</strong>
+                                <br><small class="text-muted">Manage existing batches</small>
                             </div>
-                        </button>
+                        </a>
                     </div>
+                    
+                    <!-- Batch Operations Quick Actions -->
+                    <div class="col-md-6 mb-3">
+                        <div class="btn-group w-100">
+                            <button class="btn btn-outline-success quick-link-btn flex-fill text-start" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-seedling me-2"></i>
+                                <div>
+                                    <strong>Feed Batch</strong>
+                                    <br><small class="text-muted">Record feeding for batches</small>
+                                </div>
+                            </button>
+                            <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                                <span class="visually-hidden">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                @if(isset($recentBatches) && $recentBatches->count() > 0)
+                                    @foreach($recentBatches->take(5) as $batch)
+                                    <li><a class="dropdown-item" href="{{ route('batches.feed', $batch) }}">
+                                        <i class="fas fa-seedling me-2"></i>{{ $batch->batch_id }}
+                                        <small class="text-muted d-block">{{ $batch->current_count }} animals</small>
+                                    </a></li>
+                                    @endforeach
+                                @else
+                                    <li><span class="dropdown-item-text text-muted">No batches available</span></li>
+                                @endif
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ route('batches.index') }}">View All Batches</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="btn-group w-100">
+                            <button class="btn btn-outline-danger quick-link-btn flex-fill text-start" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-heart-broken me-2"></i>
+                                <div>
+                                    <strong>Record Deaths</strong>
+                                    <br><small class="text-muted">Track mortality records</small>
+                                </div>
+                            </button>
+                            <button type="button" class="btn btn-outline-danger dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                                <span class="visually-hidden">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                @if(isset($recentBatches) && $recentBatches->count() > 0)
+                                    @foreach($recentBatches->take(5) as $batch)
+                                    <li><a class="dropdown-item" href="{{ route('batches.death', $batch) }}">
+                                        <i class="fas fa-heart-broken me-2"></i>{{ $batch->batch_id }}
+                                        <small class="text-muted d-block">{{ $batch->current_count }} animals</small>
+                                    </a></li>
+                                    @endforeach
+                                @else
+                                    <li><span class="dropdown-item-text text-muted">No batches available</span></li>
+                                @endif
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ route('batches.index') }}">View All Batches</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="btn-group w-100">
+                            <button class="btn btn-outline-dark quick-link-btn flex-fill text-start" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-cut me-2"></i>
+                                <div>
+                                    <strong>Record Slaughter</strong>
+                                    <br><small class="text-muted">Track harvesting records</small>
+                                </div>
+                            </button>
+                            <button type="button" class="btn btn-outline-dark dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                                <span class="visually-hidden">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                @if(isset($recentBatches) && $recentBatches->count() > 0)
+                                    @foreach($recentBatches->take(5) as $batch)
+                                    <li><a class="dropdown-item" href="{{ route('batches.slaughter', $batch) }}">
+                                        <i class="fas fa-cut me-2"></i>{{ $batch->batch_id }}
+                                        <small class="text-muted d-block">{{ $batch->current_count }} animals</small>
+                                    </a></li>
+                                    @endforeach
+                                @else
+                                    <li><span class="dropdown-item-text text-muted">No batches available</span></li>
+                                @endif
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ route('batches.index') }}">View All Batches</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Feed Management Quick Actions -->
                     <div class="col-md-6 mb-3">
                         <a href="{{ route('feed.in.index') }}" class="btn btn-outline-warning quick-link-btn w-100 text-start text-decoration-none">
-                            <i class="fas fa-seedling me-3"></i>
+                            <i class="fas fa-plus-square me-3"></i>
                             <div>
-                                <strong>Feed Management</strong>
-                                <br><small class="text-muted">Manage feed stock in/out</small>
+                                <strong>Feed Stock In</strong>
+                                <br><small class="text-muted">Add new feed inventory</small>
                             </div>
                         </a>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <button class="btn btn-outline-info quick-link-btn w-100 text-start" onclick="alert('Reports functionality coming soon!')">
+                        <a href="{{ route('feed.out.index') }}" class="btn btn-outline-info quick-link-btn w-100 text-start text-decoration-none">
+                            <i class="fas fa-minus-square me-3"></i>
+                            <div>
+                                <strong>Feed Stock Out</strong>
+                                <br><small class="text-muted">Issue feed from inventory</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="{{ route('feed.stock.overview') }}" class="btn btn-outline-secondary quick-link-btn w-100 text-start text-decoration-none">
                             <i class="fas fa-chart-bar me-3"></i>
                             <div>
-                                <strong>View Reports</strong>
-                                <br><small class="text-muted">Generate detailed reports</small>
+                                <strong>Stock Overview</strong>
+                                <br><small class="text-muted">View current stock levels</small>
                             </div>
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -227,6 +327,83 @@
         </div>
     </div>
 </div>
+
+<!-- Recent Batches Section -->
+@if(isset($recentBatches) && $recentBatches->count() > 0)
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-users me-2"></i>Recent Batches
+                </h5>
+                <a href="{{ route('batches.index') }}" class="btn btn-sm btn-outline-primary">
+                    View All <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Batch ID</th>
+                                <th>Animal Type</th>
+                                <th>Current Count</th>
+                                <th>Age</th>
+                                <th>Quick Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($recentBatches->take(5) as $batch)
+                            <tr>
+                                <td>
+                                    <a href="{{ route('batches.show', $batch) }}" class="text-decoration-none">
+                                        <strong class="text-primary">{{ $batch->batch_id }}</strong>
+                                    </a>
+                                    @if($batch->name)
+                                        <br><small class="text-muted">{{ $batch->name }}</small>
+                                    @endif
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ ucfirst($batch->animal_type) }}</span>
+                                </td>
+                                <td>
+                                    <strong class="{{ $batch->current_count > 0 ? 'text-success' : 'text-danger' }}">
+                                        {{ number_format($batch->current_count) }}
+                                    </strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ $batch->age_display }}</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ route('batches.feed', $batch) }}" 
+                                           class="btn btn-sm btn-outline-success" 
+                                           title="Feed Batch">
+                                            <i class="fas fa-seedling"></i>
+                                        </a>
+                                        <a href="{{ route('batches.death', $batch) }}" 
+                                           class="btn btn-sm btn-outline-danger" 
+                                           title="Record Death">
+                                            <i class="fas fa-heart-broken"></i>
+                                        </a>
+                                        <a href="{{ route('batches.slaughter', $batch) }}" 
+                                           class="btn btn-sm btn-outline-dark" 
+                                           title="Record Slaughter">
+                                            <i class="fas fa-cut"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 
 <!-- Role-specific content -->
 @if($user->role === 'admin')

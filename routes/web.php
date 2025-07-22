@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeedManagementController;
+use App\Http\Controllers\BatchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,5 +51,29 @@ Route::middleware('auth')->group(function () {
         // Feed Types Management (Admin only)
         Route::get('/types', [FeedManagementController::class, 'feedTypeIndex'])->name('types.index');
         Route::post('/types', [FeedManagementController::class, 'feedTypeStore'])->name('types.store');
+    });
+    
+    // Batch Management Routes (Animal Management)
+    Route::prefix('batches')->name('batches.')->group(function () {
+        // Main batch operations
+        Route::get('/', [BatchController::class, 'index'])->name('index');
+        Route::get('/create', [BatchController::class, 'create'])->name('create');
+        Route::post('/', [BatchController::class, 'store'])->name('store');
+        Route::get('/{batch}', [BatchController::class, 'show'])->name('show');
+        Route::get('/{batch}/edit', [BatchController::class, 'edit'])->name('edit');
+        Route::put('/{batch}', [BatchController::class, 'update'])->name('update');
+        Route::delete('/{batch}', [BatchController::class, 'destroy'])->name('destroy');
+        
+        // Feed operations
+        Route::get('/{batch}/feed', [BatchController::class, 'showFeedForm'])->name('feed');
+        Route::post('/{batch}/feed', [BatchController::class, 'storeFeed'])->name('feed.store');
+        
+        // Death operations
+        Route::get('/{batch}/death', [BatchController::class, 'showDeathForm'])->name('death');
+        Route::post('/{batch}/death', [BatchController::class, 'storeDeath'])->name('death.store');
+        
+        // Slaughter operations
+        Route::get('/{batch}/slaughter', [BatchController::class, 'showSlaughterForm'])->name('slaughter');
+        Route::post('/{batch}/slaughter', [BatchController::class, 'storeSlaughter'])->name('slaughter.store');
     });
 });
