@@ -26,6 +26,16 @@
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 10px;
+            min-height: 80px;
+            transition: all 0.3s ease;
+        }
+        .quick-link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .btn-group .quick-link-btn {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
         }
         .sidebar {
             min-height: calc(100vh - 56px);
@@ -57,6 +67,41 @@
                             <i class="fas fa-home me-1"></i>Dashboard
                         </a>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="animalsDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-paw me-1"></i>Animals
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ route('batches.index') }}">
+                                <i class="fas fa-users me-2"></i>All Batches
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ route('batches.create') }}">
+                                <i class="fas fa-plus-circle me-2"></i>Add New Batch
+                            </a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="feedDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-seedling me-1"></i>Feed Management
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ route('feed.in.index') }}">
+                                <i class="fas fa-plus-circle me-2 text-success"></i>Feed In
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ route('feed.out.index') }}">
+                                <i class="fas fa-minus-circle me-2 text-warning"></i>Feed Out
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ route('feed.stock.overview') }}">
+                                <i class="fas fa-chart-bar me-2 text-info"></i>Stock Overview
+                            </a></li>
+                            @if(Auth::user()->role === 'admin')
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ route('feed.types.index') }}">
+                                <i class="fas fa-cogs me-2"></i>Feed Types
+                            </a></li>
+                            @endif
+                        </ul>
+                    </li>
                 </ul>
                 
                 <ul class="navbar-nav">
@@ -87,22 +132,38 @@
     <div class="container-fluid">
         <div class="row">
             @auth
-            @if(Request::routeIs('dashboard'))
+            @if(Request::routeIs('dashboard') || Request::routeIs('batches.*') || Request::routeIs('feed.*'))
             <div class="col-md-2 sidebar p-3">
-                <h6 class="text-muted mb-3">NAVIGATION</h6>
+                <h6 class="text-muted mb-3">MAIN</h6>
                 <div class="nav flex-column">
-                    <a href="{{ route('dashboard') }}" class="nav-link active">
+                    <a href="{{ route('dashboard') }}" class="nav-link {{ Request::routeIs('dashboard') ? 'active' : '' }}">
                         <i class="fas fa-home me-2"></i>Dashboard
                     </a>
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-users me-2"></i>Batches
+                    
+                    <!-- Animal Management Section -->
+                    <hr>
+                    <h6 class="text-muted mb-3">ANIMAL MANAGEMENT</h6>
+                    <a href="{{ route('batches.index') }}" class="nav-link {{ Request::routeIs('batches.index') ? 'active' : '' }}">
+                        <i class="fas fa-users me-2 text-primary"></i>All Batches
                     </a>
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-paw me-2"></i>Animals
+                    <a href="{{ route('batches.create') }}" class="nav-link {{ Request::routeIs('batches.create') ? 'active' : '' }}">
+                        <i class="fas fa-plus-circle me-2 text-success"></i>Add New Batch
                     </a>
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-seedling me-2"></i>Feed Management
+                    
+                    <!-- Feed Management Section -->
+                    <hr>
+                    <h6 class="text-muted mb-3">FEED MANAGEMENT</h6>
+                    <a href="{{ route('feed.in.index') }}" class="nav-link {{ Request::routeIs('feed.in.*') ? 'active' : '' }}">
+                        <i class="fas fa-plus-circle me-2 text-success"></i>Feed In
                     </a>
+                    <a href="{{ route('feed.out.index') }}" class="nav-link {{ Request::routeIs('feed.out.*') ? 'active' : '' }}">
+                        <i class="fas fa-minus-circle me-2 text-warning"></i>Feed Out
+                    </a>
+                    <a href="{{ route('feed.stock.overview') }}" class="nav-link {{ Request::routeIs('feed.stock.*') ? 'active' : '' }}">
+                        <i class="fas fa-chart-bar me-2 text-info"></i>Stock Overview
+                    </a>
+                    
+                    <hr>
                     <a href="#" class="nav-link">
                         <i class="fas fa-chart-bar me-2"></i>Reports
                     </a>
@@ -111,6 +172,9 @@
                     <h6 class="text-muted mb-3">ADMIN</h6>
                     <a href="#" class="nav-link">
                         <i class="fas fa-user-cog me-2"></i>User Management
+                    </a>
+                    <a href="{{ route('feed.types.index') }}" class="nav-link {{ Request::routeIs('feed.types.*') ? 'active' : '' }}">
+                        <i class="fas fa-seedling me-2"></i>Feed Types
                     </a>
                     <a href="#" class="nav-link">
                         <i class="fas fa-cogs me-2"></i>Settings
