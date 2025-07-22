@@ -157,13 +157,13 @@
                         </button>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <button class="btn btn-outline-warning quick-link-btn w-100 text-start" onclick="alert('Add Feed functionality coming soon!')">
+                        <a href="{{ route('feed.in.index') }}" class="btn btn-outline-warning quick-link-btn w-100 text-start text-decoration-none">
                             <i class="fas fa-seedling me-3"></i>
                             <div>
-                                <strong>Add Feed Stock</strong>
-                                <br><small class="text-muted">Manage feed inventory</small>
+                                <strong>Feed Management</strong>
+                                <br><small class="text-muted">Manage feed stock in/out</small>
                             </div>
-                        </button>
+                        </a>
                     </div>
                     <div class="col-md-6 mb-3">
                         <button class="btn btn-outline-info quick-link-btn w-100 text-start" onclick="alert('Reports functionality coming soon!')">

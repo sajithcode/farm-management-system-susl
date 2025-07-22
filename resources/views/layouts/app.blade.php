@@ -91,7 +91,7 @@
             <div class="col-md-2 sidebar p-3">
                 <h6 class="text-muted mb-3">NAVIGATION</h6>
                 <div class="nav flex-column">
-                    <a href="{{ route('dashboard') }}" class="nav-link active">
+                    <a href="{{ route('dashboard') }}" class="nav-link {{ Request::routeIs('dashboard') ? 'active' : '' }}">
                         <i class="fas fa-home me-2"></i>Dashboard
                     </a>
                     <a href="#" class="nav-link">
@@ -100,9 +100,21 @@
                     <a href="#" class="nav-link">
                         <i class="fas fa-paw me-2"></i>Animals
                     </a>
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-seedling me-2"></i>Feed Management
+                    
+                    <!-- Feed Management Section -->
+                    <hr>
+                    <h6 class="text-muted mb-3">FEED MANAGEMENT</h6>
+                    <a href="{{ route('feed.in.index') }}" class="nav-link {{ Request::routeIs('feed.in.*') ? 'active' : '' }}">
+                        <i class="fas fa-plus-circle me-2 text-success"></i>Feed In
                     </a>
+                    <a href="{{ route('feed.out.index') }}" class="nav-link {{ Request::routeIs('feed.out.*') ? 'active' : '' }}">
+                        <i class="fas fa-minus-circle me-2 text-warning"></i>Feed Out
+                    </a>
+                    <a href="{{ route('feed.stock.overview') }}" class="nav-link {{ Request::routeIs('feed.stock.*') ? 'active' : '' }}">
+                        <i class="fas fa-chart-bar me-2 text-info"></i>Stock Overview
+                    </a>
+                    
+                    <hr>
                     <a href="#" class="nav-link">
                         <i class="fas fa-chart-bar me-2"></i>Reports
                     </a>
@@ -111,6 +123,9 @@
                     <h6 class="text-muted mb-3">ADMIN</h6>
                     <a href="#" class="nav-link">
                         <i class="fas fa-user-cog me-2"></i>User Management
+                    </a>
+                    <a href="{{ route('feed.types.index') }}" class="nav-link {{ Request::routeIs('feed.types.*') ? 'active' : '' }}">
+                        <i class="fas fa-seedling me-2"></i>Feed Types
                     </a>
                     <a href="#" class="nav-link">
                         <i class="fas fa-cogs me-2"></i>Settings
