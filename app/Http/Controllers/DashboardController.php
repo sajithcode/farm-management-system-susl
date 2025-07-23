@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Batch;
+use App\Models\IndividualAnimal;
 
 class DashboardController extends Controller
 {
@@ -27,6 +28,16 @@ class DashboardController extends Controller
             $recentBatches = collect([]); // Empty collection if table doesn't exist
         }
         
+        // Get recent alive individual animals for quick access (with error handling)
+        try {
+            $recentIndividualAnimals = IndividualAnimal::where('status', 'alive')
+                                                      ->orderBy('created_at', 'desc')
+                                                      ->take(10)
+                                                      ->get();
+        } catch (\Exception $e) {
+            $recentIndividualAnimals = collect([]); // Empty collection if table doesn't exist
+        }
+        
         // Calculate actual stats from database with error handling
         try {
             $totalBatches = Batch::count();
@@ -34,6 +45,15 @@ class DashboardController extends Controller
         } catch (\Exception $e) {
             $totalBatches = 0;
             $totalAnimals = 0;
+        }
+        
+        // Calculate individual animals stats with error handling
+        try {
+            $totalIndividualAnimals = IndividualAnimal::count();
+            $aliveIndividualAnimals = IndividualAnimal::where('status', 'alive')->count();
+        } catch (\Exception $e) {
+            $totalIndividualAnimals = 0;
+            $aliveIndividualAnimals = 0;
         }
         
         // Calculate feed stock with error handling
@@ -85,6 +105,8 @@ class DashboardController extends Controller
         $stats = [
             'total_batches' => $totalBatches,
             'total_animals' => $totalAnimals,
+            'total_individual_animals' => $totalIndividualAnimals,
+            'alive_individual_animals' => $aliveIndividualAnimals,
             'total_feed_stock' => max(0, $totalFeedStock), // Ensure non-negative
             'deaths_today' => $deathsToday,
             'slaughters_today' => $slaughtersToday,
@@ -92,6 +114,6 @@ class DashboardController extends Controller
             'total_sales' => $totalSales,
         ];
 
-        return view('dashboard.index', compact('user', 'stats', 'recentBatches'));
+        return view('dashboard.index', compact('user', 'stats', 'recentBatches', 'recentIndividualAnimals'));
     }
 }
