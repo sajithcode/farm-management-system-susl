@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeedManagementController;
 use App\Http\Controllers\BatchController;
+use App\Http\Controllers\IndividualAnimalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,5 +76,26 @@ Route::middleware('auth')->group(function () {
         // Slaughter operations
         Route::get('/{batch}/slaughter', [BatchController::class, 'showSlaughterForm'])->name('slaughter');
         Route::post('/{batch}/slaughter', [BatchController::class, 'storeSlaughter'])->name('slaughter.store');
+    });
+    
+    // Individual Animal Management Routes
+    Route::prefix('individual-animals')->name('individual-animals.')->group(function () {
+        // Main individual animal operations
+        Route::get('/', [IndividualAnimalController::class, 'index'])->name('index');
+        Route::get('/create', [IndividualAnimalController::class, 'create'])->name('create');
+        Route::post('/', [IndividualAnimalController::class, 'store'])->name('store');
+        Route::get('/{individualAnimal}', [IndividualAnimalController::class, 'show'])->name('show');
+        
+        // Feed operations
+        Route::get('/{individualAnimal}/feed', [IndividualAnimalController::class, 'showFeedForm'])->name('feed');
+        Route::post('/{individualAnimal}/feed', [IndividualAnimalController::class, 'storeFeed'])->name('feed.store');
+        
+        // Death operations
+        Route::get('/{individualAnimal}/death', [IndividualAnimalController::class, 'showDeathForm'])->name('death');
+        Route::post('/{individualAnimal}/death', [IndividualAnimalController::class, 'storeDeath'])->name('death.store');
+        
+        // Slaughter operations
+        Route::get('/{individualAnimal}/slaughter', [IndividualAnimalController::class, 'showSlaughterForm'])->name('slaughter');
+        Route::post('/{individualAnimal}/slaughter', [IndividualAnimalController::class, 'storeSlaughter'])->name('slaughter.store');
     });
 });
