@@ -72,11 +72,20 @@
                             <i class="fas fa-paw me-1"></i>Animals
                         </a>
                         <ul class="dropdown-menu">
+                            <li><h6 class="dropdown-header">Batch Management</h6></li>
                             <li><a class="dropdown-item" href="{{ route('batches.index') }}">
                                 <i class="fas fa-users me-2"></i>All Batches
                             </a></li>
                             <li><a class="dropdown-item" href="{{ route('batches.create') }}">
                                 <i class="fas fa-plus-circle me-2"></i>Add New Batch
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Individual Animals</h6></li>
+                            <li><a class="dropdown-item" href="{{ route('individual-animals.index') }}">
+                                <i class="fas fa-paw me-2"></i>All Individual Animals
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ route('individual-animals.create') }}">
+                                <i class="fas fa-plus-circle me-2"></i>Add New Animal
                             </a></li>
                         </ul>
                     </li>
@@ -132,7 +141,7 @@
     <div class="container-fluid">
         <div class="row">
             @auth
-            @if(Request::routeIs('dashboard') || Request::routeIs('batches.*') || Request::routeIs('feed.*'))
+            @if(Request::routeIs('dashboard') || Request::routeIs('batches.*') || Request::routeIs('feed.*') || Request::routeIs('individual-animals.*'))
             <div class="col-md-2 sidebar p-3">
                 <h6 class="text-muted mb-3">MAIN</h6>
                 <div class="nav flex-column">
@@ -142,12 +151,22 @@
                     
                     <!-- Animal Management Section -->
                     <hr>
-                    <h6 class="text-muted mb-3">ANIMAL MANAGEMENT</h6>
+                    <h6 class="text-muted mb-3">BATCH MANAGEMENT</h6>
                     <a href="{{ route('batches.index') }}" class="nav-link {{ Request::routeIs('batches.index') ? 'active' : '' }}">
                         <i class="fas fa-users me-2 text-primary"></i>All Batches
                     </a>
                     <a href="{{ route('batches.create') }}" class="nav-link {{ Request::routeIs('batches.create') ? 'active' : '' }}">
                         <i class="fas fa-plus-circle me-2 text-success"></i>Add New Batch
+                    </a>
+                    
+                    <!-- Individual Animal Management Section -->
+                    <hr>
+                    <h6 class="text-muted mb-3">INDIVIDUAL ANIMALS</h6>
+                    <a href="{{ route('individual-animals.index') }}" class="nav-link {{ Request::routeIs('individual-animals.index') ? 'active' : '' }}">
+                        <i class="fas fa-paw me-2 text-primary"></i>All Animals
+                    </a>
+                    <a href="{{ route('individual-animals.create') }}" class="nav-link {{ Request::routeIs('individual-animals.create') ? 'active' : '' }}">
+                        <i class="fas fa-plus-circle me-2 text-success"></i>Add New Animal
                     </a>
                     
                     <!-- Feed Management Section -->
