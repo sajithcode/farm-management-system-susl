@@ -111,6 +111,19 @@
                             @endif
                         </ul>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="medicineDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-pills me-1"></i>Medicine
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ route('medicines.index') }}">
+                                <i class="fas fa-list me-2"></i>All Medicine Records
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ route('medicines.create') }}">
+                                <i class="fas fa-plus-circle me-2"></i>Add Medicine Record
+                            </a></li>
+                        </ul>
+                    </li>
                 </ul>
                 
                 <ul class="navbar-nav">
@@ -141,7 +154,7 @@
     <div class="container-fluid">
         <div class="row">
             @auth
-            @if(Request::routeIs('dashboard') || Request::routeIs('batches.*') || Request::routeIs('feed.*') || Request::routeIs('individual-animals.*'))
+            @if(Request::routeIs('dashboard') || Request::routeIs('batches.*') || Request::routeIs('feed.*') || Request::routeIs('individual-animals.*') || Request::routeIs('medicines.*'))
             <div class="col-md-2 sidebar p-3">
                 <h6 class="text-muted mb-3">MAIN</h6>
                 <div class="nav flex-column">
@@ -180,6 +193,16 @@
                     </a>
                     <a href="{{ route('feed.stock.overview') }}" class="nav-link {{ Request::routeIs('feed.stock.*') ? 'active' : '' }}">
                         <i class="fas fa-chart-bar me-2 text-info"></i>Stock Overview
+                    </a>
+                    
+                    <!-- Medicine Management Section -->
+                    <hr>
+                    <h6 class="text-muted mb-3">MEDICINE MANAGEMENT</h6>
+                    <a href="{{ route('medicines.index') }}" class="nav-link {{ Request::routeIs('medicines.index') ? 'active' : '' }}">
+                        <i class="fas fa-list me-2 text-primary"></i>All Medicine Records
+                    </a>
+                    <a href="{{ route('medicines.create') }}" class="nav-link {{ Request::routeIs('medicines.create') ? 'active' : '' }}">
+                        <i class="fas fa-plus-circle me-2 text-success"></i>Add Medicine Record
                     </a>
                     
                     <hr>
