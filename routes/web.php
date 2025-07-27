@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeedManagementController;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\IndividualAnimalController;
+use App\Http\Controllers\MedicineController;
 
 /*
 |--------------------------------------------------------------------------
@@ -97,5 +98,19 @@ Route::middleware('auth')->group(function () {
         // Slaughter operations
         Route::get('/{individualAnimal}/slaughter', [IndividualAnimalController::class, 'showSlaughterForm'])->name('slaughter');
         Route::post('/{individualAnimal}/slaughter', [IndividualAnimalController::class, 'storeSlaughter'])->name('slaughter.store');
+    });
+    
+    // Medicine Management Routes
+    Route::prefix('medicines')->name('medicines.')->group(function () {
+        Route::get('/', [MedicineController::class, 'index'])->name('index');
+        Route::get('/create', [MedicineController::class, 'create'])->name('create');
+        Route::post('/', [MedicineController::class, 'store'])->name('store');
+        Route::get('/{medicine}', [MedicineController::class, 'show'])->name('show');
+        Route::get('/{medicine}/edit', [MedicineController::class, 'edit'])->name('edit');
+        Route::patch('/{medicine}', [MedicineController::class, 'update'])->name('update');
+        Route::delete('/{medicine}', [MedicineController::class, 'destroy'])->name('destroy');
+        
+        // AJAX routes
+        Route::get('/ajax/targets', [MedicineController::class, 'getTargets'])->name('ajax.targets');
     });
 });
