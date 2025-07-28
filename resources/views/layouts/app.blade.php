@@ -124,6 +124,20 @@
                             </a></li>
                         </ul>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="productionDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-egg me-1"></i>Production
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><h6 class="dropdown-header">🥚 PRODUCTION</h6></li>
+                            <li><a class="dropdown-item" href="{{ route('production.index') }}">
+                                <i class="fas fa-clipboard-list me-2"></i>All Production Records
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ route('production.create') }}">
+                                <i class="fas fa-plus-circle me-2"></i>Add Production Record
+                            </a></li>
+                        </ul>
+                    </li>
                 </ul>
                 
                 <ul class="navbar-nav">
@@ -154,7 +168,7 @@
     <div class="container-fluid">
         <div class="row">
             @auth
-            @if(Request::routeIs('dashboard') || Request::routeIs('batches.*') || Request::routeIs('feed.*') || Request::routeIs('individual-animals.*') || Request::routeIs('medicines.*'))
+            @if(Request::routeIs('dashboard') || Request::routeIs('batches.*') || Request::routeIs('feed.*') || Request::routeIs('individual-animals.*') || Request::routeIs('medicines.*') || Request::routeIs('production.*'))
             <div class="col-md-2 sidebar p-3">
                 <h6 class="text-muted mb-3">MAIN</h6>
                 <div class="nav flex-column">
@@ -203,6 +217,16 @@
                     </a>
                     <a href="{{ route('medicines.create') }}" class="nav-link {{ Request::routeIs('medicines.create') ? 'active' : '' }}">
                         <i class="fas fa-plus-circle me-2 text-success"></i>Add Medicine Record
+                    </a>
+                    
+                    <!-- Production Management Section -->
+                    <hr>
+                    <h6 class="text-muted mb-3">🥚 PRODUCTION</h6>
+                    <a href="{{ route('production.index') }}" class="nav-link {{ Request::routeIs('production.index') ? 'active' : '' }}">
+                        <i class="fas fa-clipboard-list me-2 text-primary"></i>All Production Records
+                    </a>
+                    <a href="{{ route('production.create') }}" class="nav-link {{ Request::routeIs('production.create') ? 'active' : '' }}">
+                        <i class="fas fa-plus-circle me-2 text-success"></i>Add Production Record
                     </a>
                     
                     <hr>
