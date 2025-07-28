@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Batch;
 use App\Models\IndividualAnimal;
+use App\Models\Sale;
 
 class DashboardController extends Controller
 {
@@ -89,17 +90,17 @@ class DashboardController extends Controller
             $totalProduction = 0;
         }
         
-        // Calculate total sales (revenue from slaughters) with error handling
+        // Calculate total sales (revenue from sales) with error handling
         try {
-            $totalSales = \DB::table('batch_slaughters')
-                            ->whereNotNull('total_weight')
-                            ->whereNotNull('price_per_kg')
-                            ->get()
-                            ->sum(function ($slaughter) {
-                                return $slaughter->total_weight * $slaughter->price_per_kg;
-                            });
+            $totalSalesRevenue = Sale::sum('price');
+            $salesThisMonth = Sale::whereMonth('date', now()->month)
+                                  ->whereYear('date', now()->year)
+                                  ->sum('price');
+            $totalSalesCount = Sale::count();
         } catch (\Exception $e) {
-            $totalSales = 0;
+            $totalSalesRevenue = 0;
+            $salesThisMonth = 0;
+            $totalSalesCount = 0;
         }
         
         $stats = [
@@ -111,7 +112,9 @@ class DashboardController extends Controller
             'deaths_today' => $deathsToday,
             'slaughters_today' => $slaughtersToday,
             'total_production' => $totalProduction,
-            'total_sales' => $totalSales,
+            'total_sales_revenue' => $totalSalesRevenue,
+            'sales_this_month' => $salesThisMonth,
+            'total_sales_count' => $totalSalesCount,
         ];
 
         return view('dashboard.index', compact('user', 'stats', 'recentBatches', 'recentIndividualAnimals'));
