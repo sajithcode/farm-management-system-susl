@@ -8,6 +8,7 @@ use App\Http\Controllers\BatchController;
 use App\Http\Controllers\IndividualAnimalController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\ProductionController;
+use App\Http\Controllers\SaleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -124,5 +125,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/{production}/edit', [ProductionController::class, 'edit'])->name('edit');
         Route::put('/{production}', [ProductionController::class, 'update'])->name('update');
         Route::delete('/{production}', [ProductionController::class, 'destroy'])->name('destroy');
+    });
+
+    // Sales Management Routes
+    Route::prefix('sales')->name('sales.')->group(function () {
+        Route::get('/', [SaleController::class, 'index'])->name('index');
+        Route::get('/create', [SaleController::class, 'create'])->name('create');
+        Route::post('/', [SaleController::class, 'store'])->name('store');
+        Route::get('/{sale}', [SaleController::class, 'show'])->name('show');
+        Route::get('/{sale}/edit', [SaleController::class, 'edit'])->name('edit');
+        Route::put('/{sale}', [SaleController::class, 'update'])->name('update');
+        Route::delete('/{sale}', [SaleController::class, 'destroy'])->name('destroy');
+        
+        // AJAX routes
+        Route::get('/ajax/sources', [SaleController::class, 'getSources'])->name('ajax.sources');
     });
 });

@@ -138,6 +138,20 @@
                             </a></li>
                         </ul>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="salesDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-money-bill-wave me-1"></i>Sales
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><h6 class="dropdown-header">💰 SALES</h6></li>
+                            <li><a class="dropdown-item" href="{{ route('sales.index') }}">
+                                <i class="fas fa-clipboard-list me-2"></i>All Sales Records
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ route('sales.create') }}">
+                                <i class="fas fa-plus-circle me-2"></i>Add New Sale
+                            </a></li>
+                        </ul>
+                    </li>
                 </ul>
                 
                 <ul class="navbar-nav">
@@ -168,7 +182,7 @@
     <div class="container-fluid">
         <div class="row">
             @auth
-            @if(Request::routeIs('dashboard') || Request::routeIs('batches.*') || Request::routeIs('feed.*') || Request::routeIs('individual-animals.*') || Request::routeIs('medicines.*') || Request::routeIs('production.*'))
+            @if(Request::routeIs('dashboard') || Request::routeIs('batches.*') || Request::routeIs('feed.*') || Request::routeIs('individual-animals.*') || Request::routeIs('medicines.*') || Request::routeIs('production.*') || Request::routeIs('sales.*'))
             <div class="col-md-2 sidebar p-3">
                 <h6 class="text-muted mb-3">MAIN</h6>
                 <div class="nav flex-column">
@@ -227,6 +241,16 @@
                     </a>
                     <a href="{{ route('production.create') }}" class="nav-link {{ Request::routeIs('production.create') ? 'active' : '' }}">
                         <i class="fas fa-plus-circle me-2 text-success"></i>Add Production Record
+                    </a>
+                    
+                    <!-- Sales Management Section -->
+                    <hr>
+                    <h6 class="text-muted mb-3">💰 SALES</h6>
+                    <a href="{{ route('sales.index') }}" class="nav-link {{ Request::routeIs('sales.index') ? 'active' : '' }}">
+                        <i class="fas fa-clipboard-list me-2 text-primary"></i>All Sales Records
+                    </a>
+                    <a href="{{ route('sales.create') }}" class="nav-link {{ Request::routeIs('sales.create') ? 'active' : '' }}">
+                        <i class="fas fa-plus-circle me-2 text-success"></i>Add New Sale
                     </a>
                     
                     <hr>
