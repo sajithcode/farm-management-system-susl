@@ -152,6 +152,20 @@
                             </a></li>
                         </ul>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="reportsDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-chart-bar me-1"></i>Reports
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><h6 class="dropdown-header">📊 REPORTS</h6></li>
+                            <li><a class="dropdown-item" href="{{ route('reports.dashboard') }}">
+                                <i class="fas fa-tachometer-alt me-2"></i>Reports Dashboard
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ route('reports.generate') }}">
+                                <i class="fas fa-file-export me-2"></i>Generate Report
+                            </a></li>
+                        </ul>
+                    </li>
                 </ul>
                 
                 <ul class="navbar-nav">
@@ -182,7 +196,7 @@
     <div class="container-fluid">
         <div class="row">
             @auth
-            @if(Request::routeIs('dashboard') || Request::routeIs('batches.*') || Request::routeIs('feed.*') || Request::routeIs('individual-animals.*') || Request::routeIs('medicines.*') || Request::routeIs('production.*') || Request::routeIs('sales.*'))
+            @if(Request::routeIs('dashboard') || Request::routeIs('batches.*') || Request::routeIs('feed.*') || Request::routeIs('individual-animals.*') || Request::routeIs('medicines.*') || Request::routeIs('production.*') || Request::routeIs('sales.*') || Request::routeIs('reports.*'))
             <div class="col-md-2 sidebar p-3">
                 <h6 class="text-muted mb-3">MAIN</h6>
                 <div class="nav flex-column">
@@ -253,10 +267,17 @@
                         <i class="fas fa-plus-circle me-2 text-success"></i>Add New Sale
                     </a>
                     
+                    <!-- Reports Section -->
                     <hr>
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-chart-bar me-2"></i>Reports
+                    <h6 class="text-muted mb-3">📊 REPORTS</h6>
+                    <a href="{{ route('reports.dashboard') }}" class="nav-link {{ Request::routeIs('reports.dashboard') ? 'active' : '' }}">
+                        <i class="fas fa-tachometer-alt me-2 text-info"></i>Reports Dashboard
                     </a>
+                    <a href="{{ route('reports.generate') }}" class="nav-link {{ Request::routeIs('reports.generate') ? 'active' : '' }}">
+                        <i class="fas fa-file-export me-2 text-warning"></i>Generate Report
+                    </a>
+                    
+                    <hr>
                     @if(Auth::user()->role === 'admin')
                     <hr>
                     <h6 class="text-muted mb-3">ADMIN</h6>

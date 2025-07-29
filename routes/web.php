@@ -9,6 +9,7 @@ use App\Http\Controllers\IndividualAnimalController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -139,5 +140,14 @@ Route::middleware('auth')->group(function () {
         
         // AJAX routes
         Route::get('/ajax/sources', [SaleController::class, 'getSources'])->name('ajax.sources');
+    });
+
+    // Reports Management Routes
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [ReportController::class, 'dashboard'])->name('dashboard');
+        Route::get('/generate', [ReportController::class, 'generate'])->name('generate');
+        Route::post('/preview', [ReportController::class, 'preview'])->name('preview');
+        Route::post('/export/pdf', [ReportController::class, 'exportPdf'])->name('export.pdf');
+        Route::post('/export/word', [ReportController::class, 'exportWord'])->name('export.word');
     });
 });

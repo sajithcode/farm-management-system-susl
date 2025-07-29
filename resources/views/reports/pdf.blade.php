@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ $title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 24px;
+        }
+        .header h2 {
+            margin: 5px 0 0 0;
+            color: #7f8c8d;
+            font-size: 16px;
+            font-weight: normal;
+        }
+        .meta-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .meta-info table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .meta-info td {
+            padding: 5px 10px;
+            border: none;
+        }
+        .meta-info .label {
+            font-weight: bold;
+            color: #2c3e50;
+            width: 120px;
+        }
+        .summary-cards {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+        .summary-card {
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            width: 22%;
+            min-height: 60px;
+        }
+        .summary-card.success { background: #27ae60; }
+        .summary-card.warning { background: #f39c12; color: #333; }
+        .summary-card.danger { background: #e74c3c; }
+        .summary-card.info { background: #3498db; }
+        .summary-card h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+        .summary-card p {
+            margin: 5px 0 0 0;
+            font-size: 11px;
+            opacity: 0.9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            page-break-inside: auto;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 11px;
+        }
+        table th {
+            background-color: #2c3e50;
+            color: white;
+            font-weight: bold;
+        }
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        table tfoot th, table tfoot td {
+            background-color: #ecf0f1;
+            font-weight: bold;
+            border-top: 2px solid #34495e;
+        }
+        .section-title {
+            color: #2c3e50;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+            margin: 25px 0 15px 0;
+            font-size: 16px;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+        }
+        .badge.primary { background: #3498db; }
+        .badge.success { background: #27ae60; }
+        .badge.warning { background: #f39c12; color: #333; }
+        .badge.danger { background: #e74c3c; }
+        .badge.info { background: #17a2b8; }
+        .page-break {
+            page-break-before: always;
+        }
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 10px;
+            color: #7f8c8d;
+            border-top: 1px solid #bdc3c7;
+            padding-top: 10px;
+        }
+        .progress-bar {
+            background: #ecf0f1;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 2px 0;
+        }
+        .progress-fill {
+            background: #3498db;
+            height: 100%;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>🐄 Farm Management System</h1>
+        <h2>{{ $title }}</h2>
+    </div>
+
+    <!-- Report Meta Information -->
+    <div class="meta-info">
+        <table>
+            <tr>
+                <td class="label">Report Type:</td>
+                <td>{{ ucfirst($reportType) }} Report</td>
+                <td class="label">Date Range:</td>
+                <td>{{ \Carbon\Carbon::parse($dateFrom)->format('M d, Y') }} - {{ \Carbon\Carbon::parse($dateTo)->format('M d, Y') }}</td>
+            </tr>
+            <tr>
+                <td class="label">Generated On:</td>
+                <td>{{ now()->format('M d, Y h:i A') }}</td>
+                <td class="label">Generated By:</td>
+                <td>{{ Auth::user()->name }}</td>
+            </tr>
+            @if($animalType !== 'all')
+            <tr>
+                <td class="label">Animal Type:</td>
+                <td colspan="3">{{ ucfirst($animalType) }}</td>
+            </tr>
+            @endif
+        </table>
+    </div>
+
+    <!-- Summary Cards -->
+    @if(isset($data['summary']) && is_array($data['summary']))
+    <div class="summary-cards">
+        @foreach(array_slice($data['summary'], 0, 4) as $key => $value)
+        <div class="summary-card {{ $loop->index % 4 === 0 ? 'primary' : ($loop->index % 4 === 1 ? 'success' : ($loop->index % 4 === 2 ? 'warning' : 'info')) }}">
+            <h3>{{ is_numeric($value) ? number_format($value, 1) : $value }}</h3>
+            <p>{{ ucwords(str_replace('_', ' ', $key)) }}</p>
+        </div>
+        @endforeach
+    </div>
+    @endif
+
+    <!-- Report Content -->
+    <div class="report-content">
+        @if($reportType === 'sales')
+            @include('reports.partials.sales', ['data' => $data])
+        @elseif($reportType === 'feed')
+            @include('reports.partials.feed', ['data' => $data])
+        @elseif($reportType === 'death')
+            @include('reports.partials.death', ['data' => $data])
+        @elseif($reportType === 'slaughter')
+            @include('reports.partials.slaughter', ['data' => $data])
+        @elseif($reportType === 'production')
+            @include('reports.partials.production', ['data' => $data])
+        @elseif($reportType === 'medicine')
+            @include('reports.partials.medicine', ['data' => $data])
+        @else
+            <!-- Combined Report -->
+            @if(isset($data['sales']) && $data['sales']['summary']['total_sales'] > 0)
+                <h3 class="section-title">💰 Sales Report</h3>
+                @include('reports.partials.sales', ['data' => $data['sales']])
+                <div class="page-break"></div>
+            @endif
+
+            @if(isset($data['feed']) && $data['feed']['summary']['total_consumption'] > 0)
+                <h3 class="section-title">🌾 Feed Report</h3>
+                @include('reports.partials.feed', ['data' => $data['feed']])
+                <div class="page-break"></div>
+            @endif
+
+            @if(isset($data['death']) && $data['death']['summary']['total_deaths'] > 0)
+                <h3 class="section-title">💀 Death Report</h3>
+                @include('reports.partials.death', ['data' => $data['death']])
+                <div class="page-break"></div>
+            @endif
+
+            @if(isset($data['slaughter']) && $data['slaughter']['summary']['total_slaughtered'] > 0)
+                <h3 class="section-title">🔪 Slaughter Report</h3>
+                @include('reports.partials.slaughter', ['data' => $data['slaughter']])
+                <div class="page-break"></div>
+            @endif
+
+            @if(isset($data['production']) && $data['production']['summary']['total_records'] > 0)
+                <h3 class="section-title">🏭 Production Report</h3>
+                @include('reports.partials.production', ['data' => $data['production']])
+                <div class="page-break"></div>
+            @endif
+
+            @if(isset($data['medicine']) && $data['medicine']['summary']['total_records'] > 0)
+                <h3 class="section-title">💊 Medicine Report</h3>
+                @include('reports.partials.medicine', ['data' => $data['medicine']])
+            @endif
+        @endif
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Farm Management System | Generated on {{ now()->format('F d, Y \a\t h:i A') }} | Page <span class="pagenum"></span></p>
+    </div>
+</body>
+</html>
