@@ -326,11 +326,13 @@ class ReportController extends Controller
 
         return [
             'title' => 'Slaughter Report',
-            'batch_slaughters' => $batchSlaughters,
-            'individual_slaughters' => $individualSlaughters,
+            'batch_slaughter' => $batchSlaughters,
+            'individual_slaughter' => $individualSlaughters,
             'summary' => [
-                'total_slaughters' => $batchSlaughters->sum('count') + $individualSlaughters->count(),
+                'total_slaughtered' => $batchSlaughters->sum('count') + $individualSlaughters->count(),
                 'total_weight' => $batchSlaughters->sum('total_weight') + $individualSlaughters->sum('weight'),
+                'batch_slaughter' => $batchSlaughters->sum('count'),
+                'individual_slaughter' => $individualSlaughters->count(),
             ]
         ];
     }
