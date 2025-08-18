@@ -40,7 +40,7 @@
 <div class="row mb-4">
     <!-- Sales Summary -->
     <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card bg-gradient text-white h-100" style="background: linear-gradient(45deg, #28a745, #20c997);">
+        <div class="card bg-gradient text-black h-100" style="background: linear-gradient(45deg, #28a745, #20c997);">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
@@ -61,7 +61,7 @@
 
     <!-- Feed Summary -->
     <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card bg-gradient text-white h-100" style="background: linear-gradient(45deg, #ffc107, #fd7e14);">
+        <div class="card bg-gradient text-black h-100" style="background: linear-gradient(45deg, #ffc107, #fd7e14);">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
@@ -82,7 +82,7 @@
 
     <!-- Death Summary -->
     <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card bg-gradient text-white h-100" style="background: linear-gradient(45deg, #dc3545, #c82333);">
+        <div class="card bg-gradient text-black h-100" style="background: linear-gradient(45deg, #dc3545, #c82333);">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
@@ -103,7 +103,7 @@
 
     <!-- Slaughter Summary -->
     <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card bg-gradient text-white h-100" style="background: linear-gradient(45deg, #6c757d, #495057);">
+        <div class="card bg-gradient text-black h-100" style="background: linear-gradient(45deg, #6c757d, #495057);">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
@@ -126,7 +126,7 @@
 <!-- Production Summary -->
 <div class="row mb-4">
     <div class="col-lg-6 col-md-12 mb-3">
-        <div class="card bg-gradient text-white h-100" style="background: linear-gradient(45deg, #17a2b8, #138496);">
+        <div class="card bg-gradient text-black h-100" style="background: linear-gradient(45deg, #17a2b8, #138496);">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
