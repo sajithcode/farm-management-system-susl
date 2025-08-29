@@ -339,16 +339,40 @@ class ReportController extends Controller
 
     private function getProductionReportData($startDate, $endDate, $location)
     {
-        $query = ProductionRecord::with(['user'])
+        $query = ProductionRecord::with(['user', 'batch'])
             ->whereBetween('production_date', [$startDate, $endDate]);
+
+        $productionRecords = $query->orderBy('production_date', 'desc')->get();
+        
+        // Calculate days in period
+        $startDateCarbon = Carbon::parse($startDate);
+        $endDateCarbon = Carbon::parse($endDate);
+        $daysInPeriod = $endDateCarbon->diffInDays($startDateCarbon) + 1;
+        
+        // Group production by type
+        $productionByType = $productionRecords->groupBy('product_type')->map(function ($records, $type) {
+            return (object) [
+                'product_type' => $type,
+                'record_count' => $records->count(),
+                'total_quantity' => $records->sum('quantity'),
+                'unit' => $records->first()->unit ?? 'units'
+            ];
+        });
+        
+        $totalProduction = $productionRecords->sum('quantity');
+        $uniqueTypes = $productionRecords->unique('product_type')->count();
+        $dailyAverage = $daysInPeriod > 0 ? ($totalProduction / $daysInPeriod) : 0;
 
         return [
             'title' => 'Production Report',
-            'data' => $query->orderBy('production_date', 'desc')->get(),
+            'production_records' => $productionRecords,
+            'production_by_type' => $productionByType,
             'summary' => [
-                'total_records' => $query->count(),
-                'total_quantity' => $query->sum('quantity'),
-                'average_daily' => $query->avg('quantity'),
+                'total_records' => $productionRecords->count(),
+                'total_production' => $totalProduction,
+                'daily_average' => $dailyAverage,
+                'unique_types' => $uniqueTypes,
+                'days_in_period' => $daysInPeriod
             ]
         ];
     }

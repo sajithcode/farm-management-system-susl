@@ -54,8 +54,8 @@
                         <td>
                             <div class="progress" style="height: 20px;">
                                 <div class="progress-bar" role="progressbar" 
-                                     style="width: {{ ($type->total_quantity / $data['summary']['total_production']) * 100 }}%">
-                                    {{ number_format(($type->total_quantity / $data['summary']['total_production']) * 100, 1) }}%
+                                     style="width: {{ $data['summary']['total_production'] > 0 ? ($type->total_quantity / $data['summary']['total_production']) * 100 : 0 }}%">
+                                    {{ $data['summary']['total_production'] > 0 ? number_format(($type->total_quantity / $data['summary']['total_production']) * 100, 1) : 0 }}%
                                 </div>
                             </div>
                         </td>
@@ -97,14 +97,12 @@
                 <td>
                     @if($record->batch_id)
                         <i class="fas fa-users me-1"></i>Batch #{{ $record->batch->batch_id ?? 'N/A' }}
-                    @elseif($record->animal_id)
-                        <i class="fas fa-paw me-1"></i>Animal #{{ $record->individualAnimal->animal_id ?? 'N/A' }}
                     @else
                         <i class="fas fa-question-circle me-1"></i>Not specified
                     @endif
                 </td>
                 <td>
-                    @if($record->quality_grade)
+                    @if(isset($record->quality_grade) && $record->quality_grade)
                         <span class="badge 
                             @if($record->quality_grade === 'A') bg-success
                             @elseif($record->quality_grade === 'B') bg-warning

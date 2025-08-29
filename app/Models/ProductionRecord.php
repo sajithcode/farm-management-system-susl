@@ -16,6 +16,7 @@ class ProductionRecord extends Model
         'product_type',
         'quantity',
         'unit',
+        'quality_grade',
         'notes',
         'user_id',
     ];
