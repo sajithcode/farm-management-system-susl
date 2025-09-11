@@ -382,13 +382,47 @@ class ReportController extends Controller
         $query = MedicineRecord::with(['user'])
             ->whereBetween('medicine_date', [$startDate, $endDate]);
 
+        // Get all records for further calculations
+        $records = $query->get();
+
+        // Calculate unique medicines
+        $uniqueMedicines = $records->pluck('medicine_name')->unique()->count();
+
+        // Calculate batch and individual treatments
+        $batchTreatments = $records->where('treatment_type', 'batch')->count();
+        $individualTreatments = $records->where('treatment_type', 'individual')->count();
+
+        // Medicine usage summary: group by medicine_name and treatment_type
+        $medicineUsage = $records
+            ->groupBy(['medicine_name', 'treatment_type'])
+            ->map(function ($group) {
+                return $group->count();
+            });
+
+        // Prepare medicine_usage for the view (flattened array)
+        $medicineUsageArray = [];
+        foreach ($medicineUsage as $medicineName => $types) {
+            foreach ($types as $treatmentType => $totalUses) {
+                $medicineUsageArray[] = [
+                    'medicine_name' => $medicineName,
+                    'treatment_type' => $treatmentType,
+                    'total_uses' => $totalUses,
+                ];
+            }
+        }
+
         return [
             'title' => 'Medicine Report',
-            'data' => $query->orderBy('medicine_date', 'desc')->get(),
+            'data' => $records,
             'summary' => [
-                'total_records' => $query->count(),
-                'total_cost' => $query->sum('cost'),
-            ]
+                'total_records' => $records->count(),
+                'total_cost' => $records->sum('cost'),
+                'unique_medicines' => $uniqueMedicines,
+                'batch_treatments' => $batchTreatments,
+                'individual_treatments' => $individualTreatments,
+            ],
+            'medicine_usage' => collect($medicineUsageArray),
+            'medicine_records' => $records,
         ];
     }
 }
