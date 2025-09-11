@@ -148,9 +148,9 @@
         <div class="card stats-card bg-gradient h-100" style="background: linear-gradient(45deg, #28a745, #20c997);">
             <div class="card-body d-flex align-items-center text-white">
                 <div class="flex-grow-1">
-                    <h5 class="card-title mb-1">Total Sales</h5>
-                    <h2 class="mb-0">${{ number_format($stats['total_sales']) }}</h2>
-                    <small class="opacity-75">All time revenue</small>
+                    <h5 class="card-title mb-1">Total Sales Revenue</h5>
+                    <h2 class="mb-0">${{ number_format($stats['total_sales_revenue'], 2) }}</h2>
+                    <small class="opacity-75">{{ $stats['total_sales_count'] }} sale records</small>
                 </div>
                 <div class="ms-3">
                     <i class="fas fa-dollar-sign fa-3x opacity-75"></i>
@@ -426,6 +426,33 @@
                             <div>
                                 <strong>Stock Overview</strong>
                                 <br><small class="text-muted">View current stock levels</small>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <!-- Sales Management Section -->
+                    <div class="col-12 mb-3">
+                        <hr class="my-3">
+                        <h6 class="text-muted mb-3">
+                            <i class="fas fa-money-bill-wave me-2"></i>💰 Sales Management
+                        </h6>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <a href="{{ route('sales.create') }}" class="btn btn-outline-success quick-link-btn w-100 text-start text-decoration-none">
+                            <i class="fas fa-plus-circle me-3 text-success"></i>
+                            <div>
+                                <strong>Add New Sale</strong>
+                                <br><small class="text-muted">Record a new sales transaction</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="{{ route('sales.index') }}" class="btn btn-outline-primary quick-link-btn w-100 text-start text-decoration-none">
+                            <i class="fas fa-clipboard-list me-3 text-primary"></i>
+                            <div>
+                                <strong>All Sales Records</strong>
+                                <br><small class="text-muted">View and manage sales history</small>
                             </div>
                         </a>
                     </div>

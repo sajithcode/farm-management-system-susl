@@ -7,6 +7,9 @@ use App\Http\Controllers\FeedManagementController;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\IndividualAnimalController;
 use App\Http\Controllers\MedicineController;
+use App\Http\Controllers\ProductionController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -112,5 +115,39 @@ Route::middleware('auth')->group(function () {
         
         // AJAX routes
         Route::get('/ajax/targets', [MedicineController::class, 'getTargets'])->name('ajax.targets');
+    });
+    
+    // Production Management Routes
+    Route::prefix('production')->name('production.')->group(function () {
+        Route::get('/', [ProductionController::class, 'index'])->name('index');
+        Route::get('/create', [ProductionController::class, 'create'])->name('create');
+        Route::post('/', [ProductionController::class, 'store'])->name('store');
+        Route::get('/{production}', [ProductionController::class, 'show'])->name('show');
+        Route::get('/{production}/edit', [ProductionController::class, 'edit'])->name('edit');
+        Route::put('/{production}', [ProductionController::class, 'update'])->name('update');
+        Route::delete('/{production}', [ProductionController::class, 'destroy'])->name('destroy');
+    });
+
+    // Sales Management Routes
+    Route::prefix('sales')->name('sales.')->group(function () {
+        Route::get('/', [SaleController::class, 'index'])->name('index');
+        Route::get('/create', [SaleController::class, 'create'])->name('create');
+        Route::post('/', [SaleController::class, 'store'])->name('store');
+        Route::get('/{sale}', [SaleController::class, 'show'])->name('show');
+        Route::get('/{sale}/edit', [SaleController::class, 'edit'])->name('edit');
+        Route::put('/{sale}', [SaleController::class, 'update'])->name('update');
+        Route::delete('/{sale}', [SaleController::class, 'destroy'])->name('destroy');
+        
+        // AJAX routes
+        Route::get('/ajax/sources', [SaleController::class, 'getSources'])->name('ajax.sources');
+    });
+
+    // Reports Management Routes
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [ReportController::class, 'dashboard'])->name('dashboard');
+        Route::get('/generate', [ReportController::class, 'generate'])->name('generate');
+        Route::post('/preview', [ReportController::class, 'preview'])->name('preview');
+        Route::post('/export/pdf', [ReportController::class, 'exportPdf'])->name('export.pdf');
+        Route::post('/export/word', [ReportController::class, 'exportWord'])->name('export.word');
     });
 });
