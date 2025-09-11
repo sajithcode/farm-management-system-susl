@@ -260,13 +260,15 @@ class ReportController extends Controller
         $query = Sale::with(['user'])
             ->whereBetween('date', [$startDate, $endDate]);
 
+        $data = $query->orderBy('date', 'desc')->get();
+        
         return [
             'title' => 'Sales Report',
-            'data' => $query->orderBy('date', 'desc')->get(),
+            'data' => $data,
             'summary' => [
-                'total_records' => $query->count(),
-                'total_revenue' => $query->sum('price'),
-                'total_quantity' => $query->sum('quantity'),
+                'total_records' => $data->count(),
+                'total_revenue' => $data->sum('price'),
+                'total_quantity' => $data->sum('quantity'),
             ]
         ];
     }
@@ -280,6 +282,10 @@ class ReportController extends Controller
         $individualFeeds = IndividualAnimalFeed::with(['individualAnimal', 'feedType', 'user'])
             ->whereBetween('feed_date', [$startDate, $endDate])
             ->get();
+
+        // Ensure we have collections, even if empty
+        $batchFeeds = $batchFeeds ?: collect([]);
+        $individualFeeds = $individualFeeds ?: collect([]);
 
         return [
             'title' => 'Feed Report',
@@ -302,6 +308,10 @@ class ReportController extends Controller
             ->whereBetween('death_date', [$startDate, $endDate])
             ->get();
 
+        // Ensure we have collections, even if empty
+        $batchDeaths = $batchDeaths ?: collect([]);
+        $individualDeaths = $individualDeaths ?: collect([]);
+
         return [
             'title' => 'Death Report',
             'batch_deaths' => $batchDeaths,
@@ -323,6 +333,10 @@ class ReportController extends Controller
         $individualSlaughters = IndividualAnimalSlaughter::with(['individualAnimal', 'user'])
             ->whereBetween('slaughter_date', [$startDate, $endDate])
             ->get();
+
+        // Ensure we have collections, even if empty
+        $batchSlaughters = $batchSlaughters ?: collect([]);
+        $individualSlaughters = $individualSlaughters ?: collect([]);
 
         return [
             'title' => 'Slaughter Report',
@@ -349,15 +363,18 @@ class ReportController extends Controller
         $endDateCarbon = Carbon::parse($endDate);
         $daysInPeriod = $endDateCarbon->diffInDays($startDateCarbon) + 1;
         
-        // Group production by type
-        $productionByType = $productionRecords->groupBy('product_type')->map(function ($records, $type) {
-            return (object) [
-                'product_type' => $type,
-                'record_count' => $records->count(),
-                'total_quantity' => $records->sum('quantity'),
-                'unit' => $records->first()->unit ?? 'units'
-            ];
-        });
+        // Group production by type - ensure it's always a collection
+        $productionByType = collect([]);
+        if ($productionRecords->isNotEmpty()) {
+            $productionByType = $productionRecords->groupBy('product_type')->map(function ($records, $type) {
+                return (object) [
+                    'product_type' => $type,
+                    'record_count' => $records->count(),
+                    'total_quantity' => $records->sum('quantity'),
+                    'unit' => $records->first()->unit ?? 'units'
+                ];
+            });
+        }
         
         $totalProduction = $productionRecords->sum('quantity');
         $uniqueTypes = $productionRecords->unique('product_type')->count();
@@ -379,16 +396,96 @@ class ReportController extends Controller
 
     private function getMedicineReportData($startDate, $endDate, $location)
     {
-        $query = MedicineRecord::with(['user'])
+        $query = MedicineRecord::with(['user', 'batch', 'individualAnimal'])
             ->whereBetween('medicine_date', [$startDate, $endDate]);
+
+        // Get all records for further calculations
+        $records = $query->get();
+
+        // Handle empty records case
+        if ($records->isEmpty()) {
+            return [
+                'title' => 'Medicine Report',
+                'data' => collect([]),
+                'summary' => [
+                    'total_records' => 0,
+                    'total_cost' => 0,
+                    'unique_medicines' => 0,
+                    'batch_treatments' => 0,
+                    'individual_treatments' => 0,
+                ],
+                'medicine_usage' => collect([]),
+                'medicine_records' => collect([]),
+            ];
+        }
+
+        // Calculate unique medicines
+        $uniqueMedicines = $records->pluck('medicine_name')->unique()->count();
+
+        // Calculate batch and individual treatments based on apply_to field
+        $batchTreatments = $records->where('apply_to', 'batch')->count();
+        $individualTreatments = $records->where('apply_to', 'individual')->count();
+
+        // Medicine usage summary: group by medicine_name and apply_to
+        $medicineUsageArray = [];
+        
+        try {
+            $medicineUsage = $records
+                ->groupBy(['medicine_name', 'apply_to'])
+                ->map(function ($byApplyTo) {
+                    return $byApplyTo->map(function ($group) {
+                        $totalQuantity = $group->sum('quantity');
+                        $totalCost = $group->sum(function ($record) {
+                            return $record->cost_per_unit ? $record->quantity * $record->cost_per_unit : 0;
+                        });
+                        return [
+                            'usage_count' => $group->count(),
+                            'total_dosage' => $totalQuantity,
+                            'total_cost' => $totalCost,
+                            'dosage_unit' => $group->first()->unit ?? 'ml',
+                            'common_reason' => $group->pluck('notes')->filter()->first() ?? 'Not specified'
+                        ];
+                    });
+                });
+
+            // Prepare medicine_usage for the view (flattened array with objects)
+            foreach ($medicineUsage as $medicineName => $applyToGroups) {
+                if (is_array($applyToGroups) || $applyToGroups instanceof \Illuminate\Support\Collection) {
+                    foreach ($applyToGroups as $applyTo => $stats) {
+                        $medicineUsageArray[] = (object)[
+                            'medicine_name' => $medicineName,
+                            'treatment_type' => ucfirst($applyTo), // Convert 'batch'/'individual' to 'Batch'/'Individual'
+                            'usage_count' => $stats['usage_count'] ?? 0,
+                            'total_dosage' => $stats['total_dosage'] ?? 0,
+                            'total_cost' => $stats['total_cost'] ?? 0,
+                            'dosage_unit' => $stats['dosage_unit'] ?? 'ml',
+                            'common_reason' => $stats['common_reason'] ?? 'Not specified',
+                        ];
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // If there's any issue with grouping, just continue with empty usage array
+            $medicineUsageArray = [];
+        }
+
+        // Calculate total cost properly
+        $totalCost = $records->sum(function ($record) {
+            return $record->cost_per_unit ? $record->quantity * $record->cost_per_unit : 0;
+        });
 
         return [
             'title' => 'Medicine Report',
-            'data' => $query->orderBy('medicine_date', 'desc')->get(),
+            'data' => $records,
             'summary' => [
-                'total_records' => $query->count(),
-                'total_cost' => $query->sum('cost'),
-            ]
+                'total_records' => $records->count(),
+                'total_cost' => round($totalCost, 2),
+                'unique_medicines' => $uniqueMedicines,
+                'batch_treatments' => $batchTreatments,
+                'individual_treatments' => $individualTreatments,
+            ],
+            'medicine_usage' => collect($medicineUsageArray),
+            'medicine_records' => $records,
         ];
     }
 }

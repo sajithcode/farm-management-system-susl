@@ -26,8 +26,18 @@
     </div>
 </div>
 
+@if($data['summary']['total_cost'] > 0)
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="alert alert-info">
+            <h5><i class="fas fa-dollar-sign me-2"></i>Total Medicine Cost: ${{ number_format($data['summary']['total_cost'], 2) }}</h5>
+        </div>
+    </div>
+</div>
+@endif
+
 <!-- Medicine Usage Summary -->
-@if($data['medicine_usage']->count() > 0)
+@if($data['medicine_usage'] && $data['medicine_usage']->count() > 0)
 <div class="row mb-4">
     <div class="col-md-12">
         <h5 class="mb-3"><i class="fas fa-pills me-2"></i>Medicine Usage Summary</h5>
@@ -36,10 +46,10 @@
                 <thead class="table-dark">
                     <tr>
                         <th>Medicine Name</th>
-                        <th>Treatment Type</th>
+                        <th>Application Type</th>
                         <th>Total Uses</th>
                         <th>Total Dosage</th>
-                        <th>Most Common Reason</th>
+                        <th>Total Cost</th>
                         <th>Usage Frequency</th>
                     </tr>
                 </thead>
@@ -49,22 +59,21 @@
                         <td><i class="fas fa-capsules me-1"></i>{{ $usage->medicine_name }}</td>
                         <td>
                             <span class="badge 
-                                @if($usage->treatment_type === 'Treatment') bg-warning
-                                @elseif($usage->treatment_type === 'Prevention') bg-success
-                                @elseif($usage->treatment_type === 'Vaccination') bg-primary
+                                @if($usage->treatment_type === 'Batch') bg-warning
+                                @elseif($usage->treatment_type === 'Individual') bg-success
                                 @else bg-secondary
                                 @endif">
-                                {{ $usage->treatment_type ?? 'General' }}
+                                {{ $usage->treatment_type }}
                             </span>
                         </td>
                         <td>{{ $usage->usage_count }}</td>
-                        <td>{{ number_format($usage->total_dosage, 2) }} {{ $usage->dosage_unit ?? 'ml' }}</td>
-                        <td>{{ $usage->common_reason ?? 'Not specified' }}</td>
+                        <td>{{ number_format($usage->total_dosage, 2) }} {{ $usage->dosage_unit }}</td>
+                        <td>${{ number_format($usage->total_cost, 2) }}</td>
                         <td>
                             <div class="progress" style="height: 20px;">
                                 <div class="progress-bar bg-info" role="progressbar" 
-                                     style="width: {{ ($usage->usage_count / $data['summary']['total_records']) * 100 }}%">
-                                    {{ number_format(($usage->usage_count / $data['summary']['total_records']) * 100, 1) }}%
+                                     style="width: {{ $data['summary']['total_records'] > 0 ? ($usage->usage_count / $data['summary']['total_records']) * 100 : 0 }}%">
+                                    {{ $data['summary']['total_records'] > 0 ? number_format(($usage->usage_count / $data['summary']['total_records']) * 100, 1) : 0 }}%
                                 </div>
                             </div>
                         </td>
@@ -78,7 +87,7 @@
 @endif
 
 <!-- Detailed Medicine Records -->
-@if($data['medicine_records']->count() > 0)
+@if($data['medicine_records'] && $data['medicine_records']->count() > 0)
 <h5 class="mb-3"><i class="fas fa-list-alt me-2"></i>Medicine Administration Records</h5>
 <div class="table-responsive">
     <table class="table table-striped table-sm">
@@ -86,13 +95,13 @@
             <tr>
                 <th>Date</th>
                 <th>Medicine</th>
-                <th>Treatment Type</th>
+                <th>Apply To</th>
                 <th>Target</th>
-                <th>Dosage</th>
-                <th>Reason</th>
+                <th>Quantity</th>
+                <th>Unit Cost</th>
+                <th>Total Cost</th>
                 <th>Administered By</th>
-                <th>Next Due</th>
-                <th>Status</th>
+                <th>Notes</th>
             </tr>
         </thead>
         <tbody>
@@ -101,74 +110,72 @@
                 <td>{{ $record->medicine_date->format('M d, Y') }}</td>
                 <td>
                     <strong>{{ $record->medicine_name }}</strong>
-                    @if($record->medicine_type)
-                        <br><small class="text-muted">{{ $record->medicine_type }}</small>
-                    @endif
                 </td>
                 <td>
                     <span class="badge 
-                        @if($record->treatment_type === 'Treatment') bg-warning
-                        @elseif($record->treatment_type === 'Prevention') bg-success
-                        @elseif($record->treatment_type === 'Vaccination') bg-primary
+                        @if($record->apply_to === 'batch') bg-warning
+                        @elseif($record->apply_to === 'individual') bg-success
                         @else bg-secondary
                         @endif">
-                        {{ $record->treatment_type ?? 'General' }}
+                        {{ ucfirst($record->apply_to) }}
                     </span>
                 </td>
                 <td>
-                    @if($record->batch_id)
-                        <i class="fas fa-users me-1"></i>Batch #{{ $record->batch->batch_id ?? 'N/A' }}
-                        <br><small class="text-muted">{{ $record->batch->animal_type ?? 'N/A' }}</small>
-                    @elseif($record->animal_id)
-                        <i class="fas fa-paw me-1"></i>Animal #{{ $record->individualAnimal->animal_id ?? 'N/A' }}
-                        <br><small class="text-muted">{{ $record->individualAnimal->animal_type ?? 'N/A' }}</small>
-                    @else
-                        <i class="fas fa-question-circle me-1"></i>Not specified
-                    @endif
-                </td>
-                <td>
-                    {{ $record->dosage }} {{ $record->dosage_unit ?? 'ml' }}
-                    @if($record->administration_method)
-                        <br><small class="text-muted">{{ $record->administration_method }}</small>
-                    @endif
-                </td>
-                <td>{{ Str::limit($record->reason ?? 'Routine', 30) }}</td>
-                <td>
-                    {{ $record->user->name }}
-                    @if($record->veterinarian)
-                        <br><small class="text-success"><i class="fas fa-user-md me-1"></i>{{ $record->veterinarian }}</small>
-                    @endif
-                </td>
-                <td>
-                    @if($record->next_dose_date)
-                        {{ $record->next_dose_date->format('M d, Y') }}
-                        @if($record->next_dose_date->isPast())
-                            <br><small class="text-danger">Overdue</small>
-                        @elseif($record->next_dose_date->isToday())
-                            <br><small class="text-warning">Due Today</small>
+                    @if($record->apply_to === 'batch' && $record->batch_id)
+                        <i class="fas fa-users me-1"></i>Batch #{{ $record->batch->batch_id ?? $record->batch_id }}
+                        @if($record->batch && $record->batch->animal_type)
+                            <br><small class="text-muted">{{ $record->batch->animal_type }}</small>
                         @endif
+                    @elseif($record->apply_to === 'individual' && $record->animal_id)
+                        <i class="fas fa-paw me-1"></i>Animal #{{ $record->individualAnimal->animal_id ?? $record->animal_id }}
+                        @if($record->individualAnimal && $record->individualAnimal->animal_type)
+                            <br><small class="text-muted">{{ $record->individualAnimal->animal_type }}</small>
+                        @endif
+                    @else
+                        <i class="fas fa-question-circle me-1"></i>{{ $record->apply_to === 'batch' ? 'Batch #' . $record->batch_id : 'Animal #' . $record->animal_id }}
+                    @endif
+                </td>
+                <td>
+                    {{ number_format($record->quantity, 2) }} {{ $record->unit ?? 'units' }}
+                </td>
+                <td>
+                    @if($record->cost_per_unit)
+                        ${{ number_format($record->cost_per_unit, 2) }}
                     @else
                         <span class="text-muted">N/A</span>
                     @endif
                 </td>
                 <td>
-                    @if($record->completed)
-                        <span class="badge bg-success">Completed</span>
+                    @if($record->cost_per_unit)
+                        ${{ number_format($record->quantity * $record->cost_per_unit, 2) }}
                     @else
-                        <span class="badge bg-warning">Ongoing</span>
+                        <span class="text-muted">N/A</span>
                     @endif
                 </td>
+                <td>
+                    @if($record->administered_by)
+                        {{ $record->administered_by }}
+                    @elseif($record->user)
+                        {{ $record->user->name }}
+                    @else
+                        <span class="text-muted">N/A</span>
+                    @endif
+                </td>
+                <td>{{ Str::limit($record->notes ?? 'No notes', 30) }}</td>
             </tr>
             @endforeach
         </tbody>
         <tfoot class="table-light">
             <tr>
-                <th colspan="4">MEDICINE TOTALS</th>
-                <th>{{ number_format($data['medicine_records']->sum('dosage'), 2) }} total dosage</th>
-                <th colspan="2">{{ $data['medicine_records']->count() }} treatments</th>
-                <th colspan="2">
-                    {{ $data['medicine_records']->where('completed', true)->count() }} completed
+                <th colspan="4">TOTALS</th>
+                <th>{{ number_format($data['medicine_records']->sum('quantity'), 2) }} total quantity</th>
+                <th></th>
+                <th>
+                    ${{ number_format($data['medicine_records']->sum(function($record) { 
+                        return $record->cost_per_unit ? $record->quantity * $record->cost_per_unit : 0; 
+                    }), 2) }}
                 </th>
+                <th colspan="2">{{ $data['medicine_records']->count() }} treatments</th>
             </tr>
         </tfoot>
     </table>
