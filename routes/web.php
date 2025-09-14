@@ -150,4 +150,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/export/pdf', [ReportController::class, 'exportPdf'])->name('export.pdf');
         Route::post('/export/word', [ReportController::class, 'exportWord'])->name('export.word');
     });
+
+    // User Profile Routes
+    Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
+    Route::post('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
 });

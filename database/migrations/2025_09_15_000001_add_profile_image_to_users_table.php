@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddFieldsToUsersTable extends Migration
+class AddProfileImageToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,9 +14,7 @@ class AddFieldsToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->enum('role', ['admin', 'data_collector', 'vc'])->default('data_collector');
-            $table->string('location')->nullable();
-            $table->string('profile_image')->nullable();
+            $table->string('profile_image')->nullable()->after('location');
         });
     }
 
@@ -28,7 +26,7 @@ class AddFieldsToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['role', 'location', 'profile_image']);
+            $table->dropColumn('profile_image');
         });
     }
 }

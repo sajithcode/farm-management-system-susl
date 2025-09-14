@@ -82,4 +82,44 @@ class AuthController extends Controller
         
         return redirect()->route('login');
     }
+
+    /**
+     * Show the user profile page.
+     */
+    public function profile()
+    {
+        $user = auth()->user();
+        return view('auth.profile', compact('user'));
+    }
+
+    /**
+     * Update the user profile.
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'location' => 'nullable|string|max:255',
+            'password' => 'nullable|string|min:6|confirmed',
+            'profile_image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+        ]);
+
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->location = $validated['location'] ?? $user->location;
+        if (!empty($validated['password'])) {
+            $user->password = bcrypt($validated['password']);
+        }
+        if ($request->hasFile('profile_image')) {
+            $image = $request->file('profile_image');
+            $filename = 'profile_' . $user->id . '.' . $image->getClientOriginalExtension();
+            $path = $image->storeAs('public/profile_images', $filename);
+            $user->profile_image = 'storage/profile_images/' . $filename;
+        }
+        $user->save();
+
+        return redirect()->route('profile')->with('success', 'Profile updated successfully!');
+    }
 }
