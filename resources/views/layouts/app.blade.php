@@ -14,7 +14,103 @@
     <style>
         .navbar-brand {
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: white !important;
+            transition: all 0.3s ease;
         }
+        
+        .navbar-brand:hover {
+            color: #f8f9fa !important;
+        }
+        
+        .navbar-logo {
+            height: 45px;
+            width: 112px;
+            object-fit: contain;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            padding: 6px;
+            margin-right: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand:hover .navbar-logo {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 1);
+        }
+        
+        .brand-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: white;
+        }
+        
+        /* Alternative professional styles - choose one */
+        .navbar-logo.style-dark {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .navbar-logo.style-green {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            border: 3px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .navbar-logo.style-blue {
+            background: linear-gradient(135deg, #3498db 0%, #5dade2 100%);
+            border: 3px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .navbar-logo.style-gold {
+            background: linear-gradient(135deg, #f39c12 0%, #f4d03f 100%);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .navbar-logo {
+                height: 40px;
+                width: 100px;
+                margin-right: 10px;
+                padding: 5px;
+            }
+            .brand-text {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar-logo {
+                height: 36px;
+                width: 90px;
+                margin-right: 8px;
+                padding: 4px;
+                border-radius: 10px;
+            }
+            .brand-text {
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .navbar-logo {
+                height: 32px;
+                width: 80px;
+                margin-right: 0;
+                padding: 3px;
+                border-radius: 8px;
+            }
+            .brand-text {
+                display: none;
+            }
+        }
+        
         .stats-card {
             border-radius: 10px;
             transition: transform 0.2s;
@@ -51,8 +147,9 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{{ route('dashboard') }}">
-                <i class="fas fa-tractor me-2"></i>Farm Management System
+            <a class="navbar-brand d-flex align-items-center" href="{{ route('dashboard') }}">
+                <img src="{{ asset('assets/images/logo-uni.png') }}" alt="Farm Logo" class="navbar-logo me-2">
+                <span class="d-none d-md-inline">Farm Management System</span>
             </a>
             
             @auth
