@@ -49,8 +49,9 @@
             width: 120px;
         }
         .summary-cards {
-            display: flex;
-            justify-content: space-between;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 10px;
             margin-bottom: 20px;
             page-break-inside: avoid;
         }
@@ -60,7 +61,7 @@
             padding: 15px;
             border-radius: 5px;
             text-align: center;
-            width: 22%;
+            width: 25%;
             min-height: 60px;
         }
         .summary-card.success { background: #27ae60; }
@@ -76,6 +77,39 @@
             font-size: 11px;
             opacity: 0.9;
         }
+        
+        /* New CSS for the updated partials */
+        .summary-container {
+            width: 100%;
+            display: table;
+            border-spacing: 10px;
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+        .summary-container .summary-card {
+            display: table-cell;
+            width: 25%;
+            vertical-align: middle;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            min-height: 60px;
+        }
+        .card-value {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .card-label {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+        .bg-primary { background: #007bff; color: white; }
+        .bg-success { background: #28a745; color: white; }
+        .bg-warning { background: #ffc107; color: #212529; }
+        .bg-danger { background: #dc3545; color: white; }
+        .bg-info { background: #17a2b8; color: white; }
+        .bg-secondary { background: #6c757d; color: white; }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -157,7 +191,7 @@
 <body>
     <!-- Header -->
     <div class="header">
-        <h1>🐄 Farm Management System</h1>
+        <h1>Farm Management System</h1>
         <h2>{{ $title }}</h2>
     </div>
 
@@ -187,14 +221,16 @@
 
     <!-- Summary Cards -->
     @if(isset($data['summary']) && is_array($data['summary']))
-    <div class="summary-cards">
-        @foreach(array_slice($data['summary'], 0, 4) as $key => $value)
-        <div class="summary-card {{ $loop->index % 4 === 0 ? 'primary' : ($loop->index % 4 === 1 ? 'success' : ($loop->index % 4 === 2 ? 'warning' : 'info')) }}">
-            <h3>{{ is_numeric($value) ? number_format($value, 1) : $value }}</h3>
-            <p>{{ ucwords(str_replace('_', ' ', $key)) }}</p>
-        </div>
-        @endforeach
-    </div>
+    <table class="summary-cards">
+        <tr>
+            @foreach(array_slice($data['summary'], 0, 4) as $key => $value)
+            <td class="summary-card {{ $loop->index % 4 === 0 ? 'primary' : ($loop->index % 4 === 1 ? 'success' : ($loop->index % 4 === 2 ? 'warning' : 'info')) }}">
+                <h3>{{ is_numeric($value) ? number_format($value, 1) : $value }}</h3>
+                <p>{{ ucwords(str_replace('_', ' ', $key)) }}</p>
+            </td>
+            @endforeach
+        </tr>
+    </table>
     @endif
 
     <!-- Report Content -->

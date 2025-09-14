@@ -261,14 +261,17 @@ class ReportController extends Controller
             ->whereBetween('date', [$startDate, $endDate]);
 
         $data = $query->orderBy('date', 'desc')->get();
+        $totalRecords = $data->count();
+        $totalRevenue = $data->sum('price');
         
         return [
             'title' => 'Sales Report',
             'data' => $data,
             'summary' => [
-                'total_records' => $data->count(),
-                'total_revenue' => $data->sum('price'),
+                'total_revenue' => $totalRevenue,
+                'sales_records' => $totalRecords,
                 'total_quantity' => $data->sum('quantity'),
+                'avg_sale_value' => $totalRecords > 0 ? ($totalRevenue / $totalRecords) : 0,
             ]
         ];
     }
@@ -294,6 +297,9 @@ class ReportController extends Controller
             'summary' => [
                 'total_records' => $batchFeeds->count() + $individualFeeds->count(),
                 'total_quantity' => $batchFeeds->sum('quantity') + $individualFeeds->sum('quantity'),
+                'total_cost' => $batchFeeds->sum('cost') + $individualFeeds->sum('cost'),
+                'average_cost_per_record' => ($batchFeeds->count() + $individualFeeds->count()) > 0 ? 
+                    ($batchFeeds->sum('cost') + $individualFeeds->sum('cost')) / ($batchFeeds->count() + $individualFeeds->count()) : 0,
             ]
         ];
     }
@@ -320,6 +326,7 @@ class ReportController extends Controller
                 'total_deaths' => $batchDeaths->sum('count') + $individualDeaths->count(),
                 'batch_deaths' => $batchDeaths->sum('count'),
                 'individual_deaths' => $individualDeaths->count(),
+                'total_weight' => $individualDeaths->sum('weight'), // Batch deaths typically don't have individual weights
             ]
         ];
     }
