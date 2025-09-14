@@ -157,7 +157,7 @@
 <body>
     <!-- Header -->
     <div class="header">
-        <h1>🐄 Farm Management System</h1>
+        <h1>Farm Management System</h1>
         <h2>{{ $title }}</h2>
     </div>
 
