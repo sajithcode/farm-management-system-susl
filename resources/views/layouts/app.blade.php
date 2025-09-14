@@ -300,93 +300,131 @@
                     <a href="{{ route('dashboard') }}" class="nav-link {{ Request::routeIs('dashboard') ? 'active' : '' }}">
                         <i class="fas fa-home me-2"></i>Dashboard
                     </a>
-                    
-                    <!-- Animal Management Section -->
                     <hr>
-                    <h6 class="text-muted mb-3">BATCH MANAGEMENT</h6>
-                    <a href="{{ route('batches.index') }}" class="nav-link {{ Request::routeIs('batches.index') ? 'active' : '' }}">
-                        <i class="fas fa-users me-2 text-primary"></i>All Batches
-                    </a>
-                    <a href="{{ route('batches.create') }}" class="nav-link {{ Request::routeIs('batches.create') ? 'active' : '' }}">
-                        <i class="fas fa-plus-circle me-2 text-success"></i>Add New Batch
-                    </a>
-                    
-                    <!-- Individual Animal Management Section -->
-                    <hr>
-                    <h6 class="text-muted mb-3">INDIVIDUAL ANIMALS</h6>
-                    <a href="{{ route('individual-animals.index') }}" class="nav-link {{ Request::routeIs('individual-animals.index') ? 'active' : '' }}">
-                        <i class="fas fa-paw me-2 text-primary"></i>All Animals
-                    </a>
-                    <a href="{{ route('individual-animals.create') }}" class="nav-link {{ Request::routeIs('individual-animals.create') ? 'active' : '' }}">
-                        <i class="fas fa-plus-circle me-2 text-success"></i>Add New Animal
-                    </a>
-                    
-                    <!-- Feed Management Section -->
-                    <hr>
-                    <h6 class="text-muted mb-3">FEED MANAGEMENT</h6>
-                    <a href="{{ route('feed.in.index') }}" class="nav-link {{ Request::routeIs('feed.in.*') ? 'active' : '' }}">
-                        <i class="fas fa-plus-circle me-2 text-success"></i>Feed In
-                    </a>
-                    <a href="{{ route('feed.out.index') }}" class="nav-link {{ Request::routeIs('feed.out.*') ? 'active' : '' }}">
-                        <i class="fas fa-minus-circle me-2 text-warning"></i>Feed Out
-                    </a>
-                    <a href="{{ route('feed.stock.overview') }}" class="nav-link {{ Request::routeIs('feed.stock.*') ? 'active' : '' }}">
-                        <i class="fas fa-chart-bar me-2 text-info"></i>Stock Overview
-                    </a>
-                    
-                    <!-- Medicine Management Section -->
-                    <hr>
-                    <h6 class="text-muted mb-3">MEDICINE MANAGEMENT</h6>
-                    <a href="{{ route('medicines.index') }}" class="nav-link {{ Request::routeIs('medicines.index') ? 'active' : '' }}">
-                        <i class="fas fa-list me-2 text-primary"></i>All Medicine Records
-                    </a>
-                    <a href="{{ route('medicines.create') }}" class="nav-link {{ Request::routeIs('medicines.create') ? 'active' : '' }}">
-                        <i class="fas fa-plus-circle me-2 text-success"></i>Add Medicine Record
-                    </a>
-                    
-                    <!-- Production Management Section -->
-                    <hr>
-                    <h6 class="text-muted mb-3">🥚 PRODUCTION</h6>
-                    <a href="{{ route('production.index') }}" class="nav-link {{ Request::routeIs('production.index') ? 'active' : '' }}">
-                        <i class="fas fa-clipboard-list me-2 text-primary"></i>All Production Records
-                    </a>
-                    <a href="{{ route('production.create') }}" class="nav-link {{ Request::routeIs('production.create') ? 'active' : '' }}">
-                        <i class="fas fa-plus-circle me-2 text-success"></i>Add Production Record
-                    </a>
-                    
-                    <!-- Sales Management Section -->
-                    <hr>
-                    <h6 class="text-muted mb-3">💰 SALES</h6>
-                    <a href="{{ route('sales.index') }}" class="nav-link {{ Request::routeIs('sales.index') ? 'active' : '' }}">
-                        <i class="fas fa-clipboard-list me-2 text-primary"></i>All Sales Records
-                    </a>
-                    <a href="{{ route('sales.create') }}" class="nav-link {{ Request::routeIs('sales.create') ? 'active' : '' }}">
-                        <i class="fas fa-plus-circle me-2 text-success"></i>Add New Sale
-                    </a>
-                    
-                    <!-- Reports Section -->
-                    <hr>
-                    <h6 class="text-muted mb-3">📊 REPORTS</h6>
-                    <a href="{{ route('reports.dashboard') }}" class="nav-link {{ Request::routeIs('reports.dashboard') ? 'active' : '' }}">
-                        <i class="fas fa-tachometer-alt me-2 text-info"></i>Reports Dashboard
-                    </a>
-                    <a href="{{ route('reports.generate') }}" class="nav-link {{ Request::routeIs('reports.generate') ? 'active' : '' }}">
-                        <i class="fas fa-file-export me-2 text-warning"></i>Generate Report
-                    </a>
-                    
-                    <hr>
+                    <!-- Batch Management Dropdown -->
+                    <div class="sidebar-section mb-3">
+                        <button class="btn w-100 text-start sidebar-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarBatch" aria-expanded="false">
+                            <h6 class="text-muted mb-0">BATCH MANAGEMENT <i class="fas fa-chevron-down float-end"></i></h6>
+                        </button>
+                        <div class="collapse" id="sidebarBatch">
+                            <a href="{{ route('batches.index') }}" class="nav-link {{ Request::routeIs('batches.index') ? 'active' : '' }}">
+                                <i class="fas fa-users me-2 text-primary"></i>All Batches
+                            </a>
+                            <a href="{{ route('batches.create') }}" class="nav-link {{ Request::routeIs('batches.create') ? 'active' : '' }}">
+                                <i class="fas fa-plus-circle me-2 text-success"></i>Add New Batch
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Individual Animals Dropdown -->
+                    <div class="sidebar-section mb-3">
+                        <button class="btn w-100 text-start sidebar-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarIndividual" aria-expanded="false">
+                            <h6 class="text-muted mb-0">INDIVIDUAL ANIMALS <i class="fas fa-chevron-down float-end"></i></h6>
+                        </button>
+                        <div class="collapse" id="sidebarIndividual">
+                            <a href="{{ route('individual-animals.index') }}" class="nav-link {{ Request::routeIs('individual-animals.index') ? 'active' : '' }}">
+                                <i class="fas fa-paw me-2 text-primary"></i>All Animals
+                            </a>
+                            <a href="{{ route('individual-animals.create') }}" class="nav-link {{ Request::routeIs('individual-animals.create') ? 'active' : '' }}">
+                                <i class="fas fa-plus-circle me-2 text-success"></i>Add New Animal
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Feed Management Dropdown -->
+                    <div class="sidebar-section mb-3">
+                        <button class="btn w-100 text-start sidebar-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarFeed" aria-expanded="false">
+                            <h6 class="text-muted mb-0">FEED MANAGEMENT <i class="fas fa-chevron-down float-end"></i></h6>
+                        </button>
+                        <div class="collapse" id="sidebarFeed">
+                            <a href="{{ route('feed.in.index') }}" class="nav-link {{ Request::routeIs('feed.in.*') ? 'active' : '' }}">
+                                <i class="fas fa-plus-circle me-2 text-success"></i>Feed In
+                            </a>
+                            <a href="{{ route('feed.out.index') }}" class="nav-link {{ Request::routeIs('feed.out.*') ? 'active' : '' }}">
+                                <i class="fas fa-minus-circle me-2 text-warning"></i>Feed Out
+                            </a>
+                            <a href="{{ route('feed.stock.overview') }}" class="nav-link {{ Request::routeIs('feed.stock.*') ? 'active' : '' }}">
+                                <i class="fas fa-chart-bar me-2 text-info"></i>Stock Overview
+                            </a>
+                            @if(Auth::user()->role === 'admin')
+                            <a href="{{ route('feed.types.index') }}" class="nav-link {{ Request::routeIs('feed.types.index') ? 'active' : '' }}">
+                                <i class="fas fa-cogs me-2"></i>Feed Types
+                            </a>
+                            @endif
+                        </div>
+                    </div>
+                    <!-- Medicine Management Dropdown -->
+                    <div class="sidebar-section mb-3">
+                        <button class="btn w-100 text-start sidebar-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMedicine" aria-expanded="false">
+                            <h6 class="text-muted mb-0">MEDICINE MANAGEMENT <i class="fas fa-chevron-down float-end"></i></h6>
+                        </button>
+                        <div class="collapse" id="sidebarMedicine">
+                            <a href="{{ route('medicines.index') }}" class="nav-link {{ Request::routeIs('medicines.index') ? 'active' : '' }}">
+                                <i class="fas fa-list me-2 text-primary"></i>All Medicine Records
+                            </a>
+                            <a href="{{ route('medicines.create') }}" class="nav-link {{ Request::routeIs('medicines.create') ? 'active' : '' }}">
+                                <i class="fas fa-plus-circle me-2 text-success"></i>Add Medicine Record
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Production Dropdown -->
+                    <div class="sidebar-section mb-3">
+                        <button class="btn w-100 text-start sidebar-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarProduction" aria-expanded="false">
+                            <h6 class="text-muted mb-0">🥚 PRODUCTION <i class="fas fa-chevron-down float-end"></i></h6>
+                        </button>
+                        <div class="collapse" id="sidebarProduction">
+                            <a href="{{ route('production.index') }}" class="nav-link {{ Request::routeIs('production.index') ? 'active' : '' }}">
+                                <i class="fas fa-clipboard-list me-2 text-primary"></i>All Production Records
+                            </a>
+                            <a href="{{ route('production.create') }}" class="nav-link {{ Request::routeIs('production.create') ? 'active' : '' }}">
+                                <i class="fas fa-plus-circle me-2 text-success"></i>Add Production Record
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Sales Dropdown -->
+                    <div class="sidebar-section mb-3">
+                        <button class="btn w-100 text-start sidebar-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarSales" aria-expanded="false">
+                            <h6 class="text-muted mb-0">💰 SALES <i class="fas fa-chevron-down float-end"></i></h6>
+                        </button>
+                        <div class="collapse" id="sidebarSales">
+                            <a href="{{ route('sales.index') }}" class="nav-link {{ Request::routeIs('sales.index') ? 'active' : '' }}">
+                                <i class="fas fa-clipboard-list me-2 text-primary"></i>All Sales Records
+                            </a>
+                            <a href="{{ route('sales.create') }}" class="nav-link {{ Request::routeIs('sales.create') ? 'active' : '' }}">
+                                <i class="fas fa-plus-circle me-2 text-success"></i>Add New Sale
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Reports Dropdown -->
+                    <div class="sidebar-section mb-3">
+                        <button class="btn w-100 text-start sidebar-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarReports" aria-expanded="false">
+                            <h6 class="text-muted mb-0">📊 REPORTS <i class="fas fa-chevron-down float-end"></i></h6>
+                        </button>
+                        <div class="collapse" id="sidebarReports">
+                            <a href="{{ route('reports.dashboard') }}" class="nav-link {{ Request::routeIs('reports.dashboard') ? 'active' : '' }}">
+                                <i class="fas fa-tachometer-alt me-2 text-info"></i>Reports Dashboard
+                            </a>
+                            <a href="{{ route('reports.generate') }}" class="nav-link {{ Request::routeIs('reports.generate') ? 'active' : '' }}">
+                                <i class="fas fa-file-export me-2 text-warning"></i>Generate Report
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Admin Dropdown -->
                     @if(Auth::user()->role === 'admin')
-                    <hr>
-                    <h6 class="text-muted mb-3">ADMIN</h6>
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-user-cog me-2"></i>User Management
-                    </a>
-                    <a href="{{ route('feed.types.index') }}" class="nav-link {{ Request::routeIs('feed.types.*') ? 'active' : '' }}">
-                        <i class="fas fa-seedling me-2"></i>Feed Types
-                    </a>
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-cogs me-2"></i>Settings
-                    </a>
+                    <div class="sidebar-section mb-3">
+                        <button class="btn w-100 text-start sidebar-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarAdmin" aria-expanded="false">
+                            <h6 class="text-muted mb-0">ADMIN <i class="fas fa-chevron-down float-end"></i></h6>
+                        </button>
+                        <div class="collapse" id="sidebarAdmin">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-user-cog me-2"></i>User Management
+                            </a>
+                            <a href="{{ route('feed.types.index') }}" class="nav-link {{ Request::routeIs('feed.types.*') ? 'active' : '' }}">
+                                <i class="fas fa-seedling me-2"></i>Feed Types
+                            </a>
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-cogs me-2"></i>Settings
+                            </a>
+                        </div>
+                    </div>
                     @endif
                 </div>
             </div>
