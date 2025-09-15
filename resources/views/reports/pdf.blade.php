@@ -49,32 +49,45 @@
             width: 120px;
         }
         .summary-cards {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
+            width: 100%;
+            margin-bottom: 15px;
             page-break-inside: avoid;
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+        }
+        .summary-cards td {
+            width: 25%;
+            vertical-align: middle;
+            padding: 0;
+            border: 1px solid #ddd;
+            text-align: center;
         }
         .summary-card {
-            background: #3498db;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
+            background: #f8f9fa;
+            color: #333;
+            padding: 8px 10px;
             text-align: center;
-            width: 22%;
-            min-height: 60px;
+            width: 100%;
+            min-height: 40px;
+            display: block;
+            border: none;
+            vertical-align: middle;
         }
-        .summary-card.success { background: #27ae60; }
-        .summary-card.warning { background: #f39c12; color: #333; }
-        .summary-card.danger { background: #e74c3c; }
-        .summary-card.info { background: #3498db; }
+        .summary-card.success { background: #f8f9fa; color: #333; }
+        .summary-card.warning { background: #f8f9fa; color: #333; }
+        .summary-card.danger { background: #f8f9fa; color: #333; }
+        .summary-card.info { background: #f8f9fa; color: #333; }
+        .summary-card.primary { background: #f8f9fa; color: #333; }
         .summary-card h3 {
             margin: 0;
-            font-size: 20px;
+            font-size: 16px;
+            color: #1a1a1a;
+            font-weight: bold;
         }
         .summary-card p {
-            margin: 5px 0 0 0;
-            font-size: 11px;
-            opacity: 0.9;
+            margin: 3px 0 0 0;
+            font-size: 9px;
+            color: #333333;
         }
         table {
             width: 100%;
@@ -100,6 +113,7 @@
             background-color: #ecf0f1;
             font-weight: bold;
             border-top: 2px solid #34495e;
+            color: black;
         }
         .section-title {
             color: #2c3e50;
@@ -120,11 +134,11 @@
             border-radius: 3px;
             font-size: 10px;
             font-weight: bold;
-            color: white;
+            color: black;
         }
         .badge.primary { background: #3498db; }
         .badge.success { background: #27ae60; }
-        .badge.warning { background: #f39c12; color: #333; }
+        .badge.warning { background: #f39c12; }
         .badge.danger { background: #e74c3c; }
         .badge.info { background: #17a2b8; }
         .page-break {
@@ -157,7 +171,7 @@
 <body>
     <!-- Header -->
     <div class="header">
-        <h1>🐄 Farm Management System</h1>
+        <h1>Farm Management System</h1>
         <h2>{{ $title }}</h2>
     </div>
 
@@ -187,72 +201,76 @@
 
     <!-- Summary Cards -->
     @if(isset($data['summary']) && is_array($data['summary']))
-    <div class="summary-cards">
+    <table class="summary-cards">
+        <tr>
         @foreach(array_slice($data['summary'], 0, 4) as $key => $value)
-        <div class="summary-card {{ $loop->index % 4 === 0 ? 'primary' : ($loop->index % 4 === 1 ? 'success' : ($loop->index % 4 === 2 ? 'warning' : 'info')) }}">
-            <h3>{{ is_numeric($value) ? number_format($value, 1) : $value }}</h3>
-            <p>{{ ucwords(str_replace('_', ' ', $key)) }}</p>
-        </div>
+            <td>
+                <div class="summary-card {{ $loop->index % 4 === 0 ? 'primary' : ($loop->index % 4 === 1 ? 'success' : ($loop->index % 4 === 2 ? 'warning' : 'info')) }}">
+                    <h3>{{ is_numeric($value) ? number_format($value, 1) : $value }}</h3>
+                    <p>{{ ucwords(str_replace('_', ' ', $key)) }}</p>
+                </div>
+            </td>
         @endforeach
-    </div>
+        </tr>
+    </table>
     @endif
 
     <!-- Report Content -->
     <div class="report-content">
         @if($reportType === 'sales')
-            @include('reports.partials.sales', ['data' => $data])
+            @include('reports.partials.sales-pdf', ['data' => $data])
         @elseif($reportType === 'feed')
-            @include('reports.partials.feed', ['data' => $data])
+            @include('reports.partials.feed-pdf', ['data' => $data])
         @elseif($reportType === 'death')
-            @include('reports.partials.death', ['data' => $data])
+            @include('reports.partials.death-pdf', ['data' => $data])
         @elseif($reportType === 'slaughter')
-            @include('reports.partials.slaughter', ['data' => $data])
+            @include('reports.partials.slaughter-pdf', ['data' => $data])
         @elseif($reportType === 'production')
-            @include('reports.partials.production', ['data' => $data])
+            @include('reports.partials.production-pdf', ['data' => $data])
         @elseif($reportType === 'medicine')
-            @include('reports.partials.medicine', ['data' => $data])
+            @include('reports.partials.medicine-pdf', ['data' => $data])
         @else
             <!-- Combined Report -->
             @if(isset($data['sales']) && $data['sales']['summary']['total_sales'] > 0)
-                <h3 class="section-title">💰 Sales Report</h3>
-                @include('reports.partials.sales', ['data' => $data['sales']])
+                <h3 class="section-title">Sales Report</h3>
+                @include('reports.partials.sales-pdf', ['data' => $data['sales']])
                 <div class="page-break"></div>
             @endif
 
             @if(isset($data['feed']) && $data['feed']['summary']['total_consumption'] > 0)
-                <h3 class="section-title">🌾 Feed Report</h3>
-                @include('reports.partials.feed', ['data' => $data['feed']])
+                <h3 class="section-title">Feed Report</h3>
+                @include('reports.partials.feed-pdf', ['data' => $data['feed']])
                 <div class="page-break"></div>
             @endif
 
             @if(isset($data['death']) && $data['death']['summary']['total_deaths'] > 0)
-                <h3 class="section-title">💀 Death Report</h3>
-                @include('reports.partials.death', ['data' => $data['death']])
+                <h3 class="section-title">Death Report</h3>
+                @include('reports.partials.death-pdf', ['data' => $data['death']])
                 <div class="page-break"></div>
             @endif
 
             @if(isset($data['slaughter']) && $data['slaughter']['summary']['total_slaughtered'] > 0)
-                <h3 class="section-title">🔪 Slaughter Report</h3>
-                @include('reports.partials.slaughter', ['data' => $data['slaughter']])
+                <h3 class="section-title">Slaughter Report</h3>
+                @include('reports.partials.slaughter-pdf', ['data' => $data['slaughter']])
                 <div class="page-break"></div>
             @endif
 
             @if(isset($data['production']) && $data['production']['summary']['total_records'] > 0)
-                <h3 class="section-title">🏭 Production Report</h3>
-                @include('reports.partials.production', ['data' => $data['production']])
+                <h3 class="section-title">Production Report</h3>
+                @include('reports.partials.production-pdf', ['data' => $data['production']])
                 <div class="page-break"></div>
             @endif
 
             @if(isset($data['medicine']) && $data['medicine']['summary']['total_records'] > 0)
-                <h3 class="section-title">💊 Medicine Report</h3>
-                @include('reports.partials.medicine', ['data' => $data['medicine']])
+                <h3 class="section-title">Medicine Report</h3>
+                @include('reports.partials.medicine-pdf', ['data' => $data['medicine']])
             @endif
         @endif
     </div>
 
     <!-- Footer -->
     <div class="footer">
-        <p>Farm Management System | Generated on {{ now()->format('F d, Y \a\t h:i A') }} | Page <span class="pagenum"></span></p>
+        <p>Farm Management System | Generated on {{ now()->format('F d, Y \a\t h:i A') }}</p>
     </div>
 </body>
 </html>
