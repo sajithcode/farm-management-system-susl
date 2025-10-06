@@ -37,4 +37,13 @@ class IndividualAnimalFeed extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get the feed type record that matches this feed's type name
+     * This is a temporary relationship until we migrate to proper foreign keys
+     */
+    public function feedType()
+    {
+        return $this->hasOne(FeedType::class, 'name', 'feed_type');
+    }
 }
