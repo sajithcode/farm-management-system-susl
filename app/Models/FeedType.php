@@ -30,6 +30,16 @@ class FeedType extends Model
         return $this->hasMany(FeedOut::class);
     }
 
+    public function batchFeeds()
+    {
+        return $this->hasMany(BatchFeed::class, 'feed_type', 'id');
+    }
+
+    public function individualAnimalFeeds()
+    {
+        return $this->hasMany(IndividualAnimalFeed::class, 'feed_type', 'id');
+    }
+
     public function getCurrentStockAttribute()
     {
         $totalIn = $this->feedIns()->sum('quantity');
