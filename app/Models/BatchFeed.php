@@ -37,4 +37,9 @@ class BatchFeed extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function feedType()
+    {
+        return $this->belongsTo(FeedType::class, 'feed_type', 'id');
+    }
 }
